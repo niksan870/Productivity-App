@@ -1,0 +1,57 @@
+{
+  "name": "test-admin",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@devexpress/dx-react-core": "^2.6.3",
+    "@devexpress/dx-react-scheduler": "^2.6.3",
+    "@devexpress/dx-react-scheduler-material-ui": "^2.6.3",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "axios": "^0.19.2",
+    "default": "^0.1.1",
+    "delay": "^4.2.0",
+    "export": "^0.1.337",
+    "gh-pages": "^1.2.0",
+    "jwt-decode": "^2.2.0",
+    "moment": "^2.26.0",
+    "node-sass": "^4.14.1",
+    "prop-types": "^15.7.2",
+    "ra-data-fakerest": "^3.2.2",
+    "ra-data-json-server": "^3.5.1",
+    "ra-data-simple-rest": "^3.3.2",
+    "react": "^16.13.1",
+    "react-admin": "^3.5.1",
+    "react-big-calendar": "^0.25.0",
+    "react-bootstrap": "^1.0.1",
+    "react-dom": "^16.13.1",
+    "react-hook-form": "^5.7.2",
+    "react-player": "^2.1.1",
+    "react-pose": "^4.0.8",
+    "react-scripts": "3.4.1",
+    "react-spring": "^8.0.20",
+    "react-vis": "^1.11.7"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

@@ -1,0 +1,131 @@
+package com.example.polls.model;
+
+import com.example.polls.model.audit.UserDateAudit;
+import com.example.polls.util.JSONObjectConverter;
+import org.hibernate.annotations.GenericGenerator;
+import org.json.JSONObject;
+import org.springframework.lang.NonNull;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Entity
+@Table(name = "user_goals")
+public class Goal extends UserDateAudit {
+    @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID id;
+
+    private String title;
+
+    private String description;
+
+    @NonNull
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter= JSONObjectConverter.class)
+    private JSONObject jsonData;
+
+    private String dailyTimePerDay;
+
+    private String timeDone;
+
+    private String timeDoneForTheDay;
+
+    private String deadlineSetter;
+
+    private boolean isPrivate;
+
+
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "sub_goals",
+            joinColumns = { @JoinColumn(name = "goal_id") },
+            inverseJoinColumns = { @JoinColumn(name = "user_id") }
+    )
+    private List<User> attendees = new ArrayList();
+
+    public String getTimeDone() {
+        return timeDone;
+    }
+
+    public void setTimeDone(String timeDone) {
+        this.timeDone = timeDone;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getDailyTimePerDay() {
+        return dailyTimePerDay;
+    }
+
+    public void setDailyTimePerDay(String dailyTimePerDay) {
+        this.dailyTimePerDay = dailyTimePerDay;
+    }
+
+    public String getTimeDoneForTheDay() {
+        return timeDoneForTheDay;
+    }
+
+    public void setTimeDoneForTheDay(String timeDoneForTheDay) {
+        this.timeDoneForTheDay = timeDoneForTheDay;
+    }
+
+    public String getDeadlineSetter() {
+        return deadlineSetter;
+    }
+
+    public void setDeadlineSetter(String deadlineSetter) {
+        this.deadlineSetter = deadlineSetter;
+    }
+
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(boolean aPrivate) {
+        isPrivate = aPrivate;
+    }
+
+    @NonNull
+    public JSONObject getJsonData() {
+        return jsonData;
+    }
+
+    public void setJsonData(@NonNull JSONObject jsonData) {
+        this.jsonData = jsonData;
+    }
+
+    public List<User> getAttendees() {
+        return attendees;
+    }
+
+    public void setAttendees(List<User> attendees) {
+        this.attendees = attendees;
+    }
+}
