@@ -1,6 +1,7 @@
 package com.example.polls.model;
 
 import com.example.polls.model.audit.DateAudit;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -8,7 +9,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name= "users", uniqueConstraints = {
@@ -69,8 +72,9 @@ public class User extends DateAudit {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "attendees")
-    private Set<Goal> attendees = new HashSet<>();
+    private Set<Goal> sub_goals = new HashSet<>();
 
     public User() {
 
@@ -181,11 +185,11 @@ public class User extends DateAudit {
     }
 
 
-    public Set<Goal> getAttendees() {
-        return attendees;
+    public Set<Goal> getsub_goals() {
+        return sub_goals;
     }
 
-    public void setAttendees(Set<Goal> attendees) {
-        this.attendees = attendees;
+    public void setsub_goals(Set<Goal> sub_goals) {
+        this.sub_goals = sub_goals;
     }
 }

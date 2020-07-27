@@ -16,8 +16,11 @@ import java.util.UUID;
 @Repository
 public interface GoalsRepository extends JpaRepository<Goal, UUID> {
 
-    @Query("SELECT u.attendees FROM User u WHERE u.id = :id")
-    Set<Goal> getUserAttendeesByUserId(@Param("id") long id);
+    @Query("SELECT g FROM Goal g WHERE g.isPrivate = 0 AND g.title LIKE CONCAT('%',:#{#q},'%')")
+    Set<Goal> getUserSubGoalsByUserId(@Param("q") String q);
+
+    @Query("SELECT g FROM Goal g JOIN g.attendees u WHERE u.id = :id AND g.title LIKE CONCAT('%',:#{#q},'%')")
+    Set<Goal> getCurrentUserSubGoalsByUserId(@Param("id") long id, @Param("q") String q);
 
     @Query("SELECT g FROM Goal g WHERE g.title = :#{#goalTitle}")
     Goal findOne(@Param("goalTitle") String goalTitle);

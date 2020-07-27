@@ -6,14 +6,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-/**
- * Created by rajeevkumarsingh on 02/08/17.
- */
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 //    User findByUserId(Long userId);
+
 
     Optional<User> findByEmail(String email);
 

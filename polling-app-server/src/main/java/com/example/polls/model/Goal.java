@@ -2,6 +2,7 @@ package com.example.polls.model;
 
 import com.example.polls.model.audit.UserDateAudit;
 import com.example.polls.util.JSONObjectConverter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.json.JSONObject;
 import org.springframework.lang.NonNull;
@@ -37,8 +38,8 @@ public class Goal extends UserDateAudit {
 
     private boolean isPrivate;
 
-
-    @ManyToMany()
+    @JsonIgnore
+    @ManyToMany
     @JoinTable(
             name = "sub_goals",
             joinColumns = { @JoinColumn(name = "goal_id") },

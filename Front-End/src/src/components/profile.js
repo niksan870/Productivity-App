@@ -16,6 +16,7 @@ import {
   ReferenceManyField,
   Datagrid,
   ShowButton,
+  DeleteButton,
   ReferenceField,
 } from "react-admin";
 import FormDialog from "../lists/FormDialog";
@@ -43,29 +44,29 @@ function formatPicture(value) {
   }
 }
 
-// const ProfileActions = ({ basePath, data, resource, props }) => {
-//   let currentUserId = data.editProfile;
-//   let permissions = localStorage.getItem("permissions");
-//   return (
-//     <TopToolbar>
-//       {currentUserId ? (
-//         <EditButton basePath={basePath} record={data} />
-//       ) : permissions.includes("ADMIN") ? (
-//         <EditButton basePath={basePath} record={data} />
-//       ) : null}
-//       {currentUserId ? (
-//         <DeleteButton basePath={basePath} record={data} />
-//       ) : permissions.includes("ADMIN") ? (
-//         <DeleteButton basePath={basePath} record={data} />
-//       ) : null}
-//     </TopToolbar>
-//   );
-// };
+const ProfileActions = ({ basePath, data, resource, props }) => {
+  let currentUserId = data.editProfile;
+  let permissions = localStorage.getItem("permissions");
+  return (
+    <TopToolbar>
+      {currentUserId ? (
+        <EditButton basePath={basePath} record={data} />
+      ) : permissions.includes("ADMIN") ? (
+        <EditButton basePath={basePath} record={data} />
+      ) : null}
+      {currentUserId ? (
+        <DeleteButton basePath={basePath} record={data} />
+      ) : permissions.includes("ADMIN") ? (
+        <DeleteButton basePath={basePath} record={data} />
+      ) : null}
+    </TopToolbar>
+  );
+};
 
 export const ProfileEdit = (props) => {
   console.log(props);
   return (
-    <Edit {...props} undoable={false}>
+    <Edit {...props} undoable={false} actions={<ProfileActions />}>
       <SimpleForm>
         {/* {props.permissions.includes("ADMIN") ? (
           <TextInput disabled label="Id" source="id" />
@@ -92,9 +93,8 @@ export const ProfileEdit = (props) => {
 };
 
 export const ProfileShow = (props) => {
-  console.log(props);
   return (
-    <Show {...props} title="Profile view">
+    <Show {...props} title="Profile view" actions={<ProfileActions />}>
       <TabbedShowLayout>
         <Tab label="PRrfile">
           <CustomImageField source="picture" title="Picture" />

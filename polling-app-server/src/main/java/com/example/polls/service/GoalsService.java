@@ -25,9 +25,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -171,10 +168,11 @@ public class GoalsService {
         Set<Goal> goals = null;
 
         if (!all) {
-            goals = goalsRepository.getUserAttendeesByUserId(userPrincipal.getCurrentUserPrincipal().getId());
+            goals = goalsRepository.getCurrentUserSubGoalsByUserId(userPrincipal.getCurrentUserPrincipal().getId(), q);
         } else {
-//            goals = goalsRepository.findWithFilter(userPrincipal.getCurrentUserPrincipal().getId(), q, pageable);
+            goals = goalsRepository.getUserSubGoalsByUserId(q);
         }
+
         Map<Long, User> creatorMap = getGoalCreatorMap(goals);
 
         List<GoalResponse> goalResponses = goals.stream().map(goal -> {
@@ -194,9 +192,9 @@ public class GoalsService {
     public Page<GoalResponse> getGoalsFromProfile(Long id) {
         Set<Goal> goals;
         if (userPrincipal.getCurrentUserPrincipal().getId() == id) {
-            goals = goalsRepository.getGoalsFromMyProfile(id);
+            goals = goalsRepository.getCurrentUserSubGoalsByUserId(id, "");
         } else {
-            goals = goalsRepository.getGoalsFromProfile(id);
+            goals = goalsRepository.getUserSubGoalsByUserId("");
         }
         List<GoalResponse> goalResponses = ObjectMapperUtils.mapAll(goals, GoalResponse.class);
 
@@ -221,7 +219,6 @@ public class GoalsService {
     public GoalRequest getOne(UUID id) {
         Goal goal = goalsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Goal", "id", id));
-
 
         String[] hoursAndMinutes = goal.getDailyTimePerDay().split(":");
 

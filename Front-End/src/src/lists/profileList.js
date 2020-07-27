@@ -35,7 +35,6 @@ export const ProfilesList = (props) => {
         <TextField source="dateOfBirth" />
         <TextField source="city" />
         <TextField source="country" />
-        <TextField source="goals" />
         {ifAdminGetField(props.permissions, "createdAt")}
         {ifAdminGetField(props.permissions, "updatedAt")}
         <ShowButton />
