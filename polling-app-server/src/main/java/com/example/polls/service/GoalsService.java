@@ -7,15 +7,9 @@ import com.example.polls.dto.goal.GoalResponse;
 import com.example.polls.dto.user.UserProfileDTO;
 import com.example.polls.exception.BadRequestException;
 import com.example.polls.exception.ResourceNotFoundException;
-import com.example.polls.model.Goal;
-import com.example.polls.model.Pomodoro;
-import com.example.polls.model.PomodoroMusic;
-import com.example.polls.model.User;
+import com.example.polls.model.*;
 import com.example.polls.payload.Assemblers.GoalResourceAssembler;
-import com.example.polls.repository.GoalsRepository;
-import com.example.polls.repository.PomodoroMusicRepository;
-import com.example.polls.repository.PomodoroRepository;
-import com.example.polls.repository.UserRepository;
+import com.example.polls.repository.*;
 import com.example.polls.util.ModelMapper;
 import com.example.polls.util.ObjectMapperUtils;
 import com.example.polls.util.TimeHandler;
@@ -42,6 +36,9 @@ public class GoalsService {
     private GoalsRepository goalsRepository;
 
     @Autowired
+    private GoalChartRepository goalChartRepository;
+
+    @Autowired
     private PomodoroRepository pomodoroRepository;
 
     @Autowired
@@ -55,30 +52,21 @@ public class GoalsService {
 
     @Autowired
     private UserRepository userProfileRepository;
-    
+
     @Autowired
     private GoalResourceAssembler goalResourceAssembler;
 
-    public GoalRequest logTime(UUID id, TimeRequest time) {
-        Goal updateGoal = goalsRepository.findOneById(id);
+    public GoalResponse logTime(UUID id, TimeRequest time) {
+        GoalChart updateGoal = goalChartRepository.findByGoalChartByGoalId(id);
 
         String addToTimeDone = updateGoal.getTimeDone();
         String formattedTime = new TimeHandler().formattedTime(time);
+
         if (addToTimeDone.isEmpty() || addToTimeDone == null) {
             updateGoal.setTimeDone(formattedTime);
-            Goal goalToBeMapped = goalsRepository.save(updateGoal);
-            GoalRequest goalRequest = new GoalRequest();
+            GoalChart goalToBeMapped = goalChartRepository.save(updateGoal);
 
-            String[] hoursAndMinutes = goalToBeMapped.getDailyTimePerDay().split(":");
-
-            goalRequest.setDescription(goalToBeMapped.getDescription());
-            goalRequest.setHours(hoursAndMinutes[0]);
-            goalRequest.setMinutes(hoursAndMinutes[1]);
-            goalRequest.setTitle(goalToBeMapped.getTitle());
-            goalRequest.setDeadlineSetter(goalToBeMapped.getDeadlineSetter());
-            goalRequest.setStringifiedJsonData(goalToBeMapped.getJsonData().toString());
-
-            return goalRequest;
+            return ObjectMapperUtils.map(goalToBeMapped, GoalResponse.class);
         } else {
             try {
                 String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
@@ -96,8 +84,8 @@ public class GoalsService {
                     String[] elementNames = JSONObject.getNames(objectInArray);
 
                     JSONObject item = new JSONObject();
-                    String x = "";
-                    String y = "";
+                    String date = "";
+                    String expectedV = "";
                     boolean foundDate = false;
                     for (String elementName : elementNames) {
                         String value = objectInArray.getString(elementName);
@@ -105,43 +93,33 @@ public class GoalsService {
                             if (currentDate.equals(value)) {
                                 foundDate = true;
                             }
-                            x = value;
+                            date = value;
                         }
                         if (elementName.equals("y")) {
                             if (foundDate == true) {
-                                y = String.valueOf(Long.valueOf(time.getTime()).longValue() + Long.valueOf(value).longValue());
+                                expectedV = String.valueOf(Long.valueOf(time.getTime()).longValue() + Long.valueOf(value).longValue());
                                 foundDate = false;
                             } else {
-                                y = value;
+                                expectedV = value;
                             }
                         }
                     }
-                    item.put("x", x);
-                    item.put("y", y);
+                    item.put("date", date);
+                    item.put("y", expectedV);
                     newJSONArray.put(item);
                 }
 
                 json.put("dataGraph", newJSONArray);
                 updateGoal.setJsonData(json);
                 updateGoal.setTimeDone(summedTime);
-//                updateGoal.setUpdatedAt();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        Goal goalToBeMapped = goalsRepository.save(updateGoal);
-        GoalRequest goalRequest = new GoalRequest();
-        String[] hoursAndMinutes = goalToBeMapped.getDailyTimePerDay().split(":");
+        GoalChart goalToBeMapped = goalChartRepository.save(updateGoal);
 
-        goalRequest.setDescription(goalToBeMapped.getDescription());
-        goalRequest.setHours(hoursAndMinutes[0]);
-        goalRequest.setMinutes(hoursAndMinutes[1]);
-        goalRequest.setTitle(goalToBeMapped.getTitle());
-        goalRequest.setDeadlineSetter(goalToBeMapped.getDeadlineSetter());
-        goalRequest.setStringifiedJsonData(goalToBeMapped.getJsonData().toString());
-
-        return goalRequest;
+        return ObjectMapperUtils.map(goalToBeMapped, GoalResponse.class);
     }
 
 
@@ -165,7 +143,7 @@ public class GoalsService {
         String q = json.has("q") ? json.getString("q") : "";
         boolean all = json.has("all") ? json.getBoolean("all") : false;
 
-        Set<Goal> goals = null;
+        Set<Goal> goals;
 
         if (!all) {
             goals = goalsRepository.getCurrentUserSubGoalsByUserId(userPrincipal.getCurrentUserPrincipal().getId(), q);
@@ -192,9 +170,9 @@ public class GoalsService {
     public Page<GoalResponse> getGoalsFromProfile(Long id) {
         Set<Goal> goals;
         if (userPrincipal.getCurrentUserPrincipal().getId() == id) {
-            goals = goalsRepository.getCurrentUserSubGoalsByUserId(id, "");
+            goals = goalsRepository.getGoalsFromMyProfile(id);
         } else {
-            goals = goalsRepository.getUserSubGoalsByUserId("");
+            goals = goalsRepository.getGoalsFromProfile(id);
         }
         List<GoalResponse> goalResponses = ObjectMapperUtils.mapAll(goals, GoalResponse.class);
 
@@ -216,24 +194,14 @@ public class GoalsService {
         goalsRepository.save(goal);
     }
 
-    public GoalRequest getOne(UUID id) {
+    public GoalResponse getOne(UUID id) {
         Goal goal = goalsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Goal", "id", id));
 
-        String[] hoursAndMinutes = goal.getDailyTimePerDay().split(":");
-
-        GoalRequest goalRequest = new GoalRequest();
-        goalRequest.setDeadlineSetter(goal.getDeadlineSetter());
-        goalRequest.setDescription(goal.getDescription());
-        goalRequest.setTitle(goal.getTitle());
-        goalRequest.setHours(hoursAndMinutes[0]);
-        goalRequest.setMinutes(hoursAndMinutes[1]);
-        goalRequest.setStringifiedJsonData(goal.getJsonData().toString());
-
-        return goalRequest;
+        return ObjectMapperUtils.map(goal, GoalResponse.class);
     }
 
-    public Goal create(GoalRequest goalRequest) throws NullPointerException {
+    public GoalResponse create(GoalRequest goalRequest) throws NullPointerException {
         String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
         DateTime start = DateTime.parse(currentDate);
         DateTime end = DateTime.parse(goalRequest.getDeadlineSetter());
@@ -266,11 +234,12 @@ public class GoalsService {
         goal.setTitle(goalRequest.getTitle());
         goal.setDescription(goalRequest.getDescription());
 
+        Goal updatedGoal = goalsRepository.save(goal);
 
-        return goalsRepository.save(goal);
+        return ObjectMapperUtils.map(updatedGoal, GoalResponse.class);
     }
 
-    public Goal update(GoalRequest goalRequest,
+    public GoalResponse update(GoalRequest goalRequest,
                        UUID id) {
         Goal goal = goalsRepository.findOneById(id);
 
@@ -280,7 +249,9 @@ public class GoalsService {
         goal.setDailyTimePerDay(goalRequest.getHours() + ":" + goalRequest.getMinutes());
         goal.setDeadlineSetter(goalRequest.getDeadlineSetter());
 
-        return goalsRepository.save(goal);
+        Goal updatedGoal = goalsRepository.save(goal);
+
+        return ObjectMapperUtils.map(updatedGoal, GoalResponse.class);
     }
 
     public HttpEntity delete(UUID id) {

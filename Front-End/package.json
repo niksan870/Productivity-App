@@ -31,7 +31,8 @@
     "react-pose": "^4.0.8",
     "react-scripts": "3.4.1",
     "react-spring": "^8.0.20",
-    "react-vis": "^1.11.7"
+    "react-vis": "^1.11.7",
+    "recharts": "^1.8.5"
   },
   "scripts": {
     "start": "react-scripts start",

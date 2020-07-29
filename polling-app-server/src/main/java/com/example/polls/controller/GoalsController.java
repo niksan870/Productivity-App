@@ -4,7 +4,6 @@ import com.example.polls.dto.DashboardLoaderDTO;
 import com.example.polls.dto.TimeRequest;
 import com.example.polls.dto.goal.GoalRequest;
 import com.example.polls.dto.goal.GoalResponse;
-import com.example.polls.model.Goal;
 import com.example.polls.security.CurrentUser;
 import com.example.polls.security.UserPrincipal;
 import com.example.polls.service.GoalsService;
@@ -27,12 +26,10 @@ public class GoalsController {
     @PutMapping("/logTime/{id}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public GoalRequest logTime(@PathVariable UUID id,
+    public GoalResponse logTime(@PathVariable UUID id,
                                @RequestBody TimeRequest time) {
        return goalsService.logTime(id, time);
     }
-
-
 
     @GetMapping("getGoalsFromProfile/{id}")
     @PreAuthorize("isAuthenticated()")
@@ -59,14 +56,14 @@ public class GoalsController {
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public GoalRequest getOne(@PathVariable UUID id) {
+    public GoalResponse getOne(@PathVariable UUID id) {
         return goalsService.getOne(id);
     }
 
     @PostMapping("")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.CREATED)
-    public Goal create(@RequestBody GoalRequest goalRequest) throws NullPointerException{
+    public GoalResponse create(@RequestBody GoalRequest goalRequest) throws NullPointerException{
       return goalsService.create(goalRequest);
     }
 
@@ -80,7 +77,7 @@ public class GoalsController {
     @PutMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public Goal update(@RequestBody GoalRequest goalRequest,
+    public GoalResponse update(@RequestBody GoalRequest goalRequest,
                        @PathVariable UUID id) {
         return goalsService.update(goalRequest, id);
     }

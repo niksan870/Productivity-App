@@ -38,6 +38,10 @@ public class Goal extends UserDateAudit {
 
     private boolean isPrivate;
 
+    @OneToOne(mappedBy = "goal", cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, optional = false)
+    private GoalChart goalChart;
+
     @JsonIgnore
     @ManyToMany
     @JoinTable(
@@ -126,5 +130,13 @@ public class Goal extends UserDateAudit {
 
     public void setAttendees(Set<User> attendees) {
         this.attendees = attendees;
+    }
+
+    public GoalChart getGoalChart() {
+        return goalChart;
+    }
+
+    public void setGoalChart(GoalChart goalChart) {
+        this.goalChart = goalChart;
     }
 }

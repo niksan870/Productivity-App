@@ -56,7 +56,6 @@ function swtichResourceMethods(type, resource, params, apiUrl) {
       let { page, perPage } = params.pagination;
       --page;
 
-
       if (params.filter.method != undefined) {
         url = `${apiUrl}/${resource}/${params.filter.method}/${params.id}?page=${page}&pageSize=${perPage}`;
       } else {

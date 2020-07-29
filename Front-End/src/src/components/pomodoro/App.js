@@ -15,7 +15,8 @@ import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import { BASE_API_AUTH_URL } from "../../../constants";
+import { BASE_API_AUTH_URL, BASE_API_URL } from "../../../constants";
+import Example from "./Example";
 
 class App extends Component {
   constructor(props) {
@@ -38,7 +39,7 @@ class App extends Component {
       dailyTimeToBeReached: null,
       counter: -1,
       selectedGoal: null,
-      token: localStorage.getItem("token"),
+      token: localStorage.getItem("accessToken"),
     };
 
     this.onIncreaseBreak = this.onIncreaseBreak.bind(this);
@@ -105,13 +106,15 @@ class App extends Component {
 
   submitTime() {
     let goalId = this.state.goalId;
+
+    console.log(goalId)
     let timeDoneSoFar =
       this.state.sessionLength * 60 - this.state.timeLeftInSecond;
 
     let actualTimeDoneSoFar = timeDoneSoFar - this.state.timeDoneSoFar;
     axios({
       method: "put",
-      url: BASE_API_AUTH_URL + "/goals/logTime/" + goalId,
+      url: BASE_API_URL + "/goals/logTime/" + goalId,
       data: { time: actualTimeDoneSoFar },
       headers: {
         Authorization: "Bearer " + this.state.token,
@@ -189,7 +192,6 @@ class App extends Component {
   }
 
   handleSelect(e) {
-    console.log(e.target.value)
     // axios({
     //   method: "get",
     //   url: BASE_API_AUTH_URL + "/goals/" + e.target.value,
@@ -214,16 +216,15 @@ class App extends Component {
         Number.parseInt(this.props.defaultSessionLength, 10) * 60,
       isStart: false,
       timerInterval: null,
+      goalId: e.target.value.id,
+      showGraph: true,
     });
     //   })
     //   .catch((error) => {
     //     this.props.showNotification("Error: comment not approved", "warning");
     //   });
 
-    this.setState({
-      goalId: e.target.value,
-      showGraph: true,
-    });
+
   }
 
   componentWillReceiveProps(props) {
@@ -235,6 +236,7 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.state.showGraph);
     return (
       <div>
         <div className="pomodoro-clock">
@@ -291,20 +293,16 @@ class App extends Component {
                 ))}
               </Select>
             </FormControl>
-            <GoalSection
+            {/* <GoalSection
               data={
                 this.state.selectedGoal != null
                   ? this.state.selectedGoal
                   : null
               }
-            />
-            {/* {this.state.showGraph ? (
-                    <Chart
-                      goalId={this.state.goalId}
-                      gaolData={this.state.selectedGoal}
-                      dailyTimeToBeReached={this.state.dailyTimeToBeReached}
-                    />
-                  ) : null} */}
+            /> */}
+            {this.state.showGraph ? (
+              <Example />
+            ) : null}
           </Container>
         </Grid>
       </div>

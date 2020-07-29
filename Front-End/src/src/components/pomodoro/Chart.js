@@ -55,26 +55,26 @@ class Chart extends React.Component {
 
     console.log(123);
     return (
-      // <FlexibleXYPlot className="Chart" xType="time" height={300}>
-      //   <HorizontalGridLines />
-      //   <VerticalGridLines />
-      //   <XAxis title="Time Until Deadline" />
-      //   <YAxis
-      //     title="Time To Be Done"
-      //     tickFormat={function tickFormat(d) {
-      //       let date = new Date(null);
-      //       date.setSeconds(d);
-      //       return date.toISOString().substr(11, 5);
-      //     }}
-      //   />
-      //   {timeDoneForEachDayUntilTheDeadLine != undefined ? (
-      //     <LineSeries data={timeDoneForEachDayUntilTheDeadLine} />
-      //   ) : null}
-      //   {expectedTimeToBeDone != undefined ? (
-      //     <LineSeries data={expectedTimeToBeDone} />
-      //   ) : null}
-      // </FlexibleXYPlot>
-      <div>asdasd</div>
+      <FlexibleXYPlot className="Chart" xType="time" height={300}>
+        <HorizontalGridLines />
+        <VerticalGridLines />
+        <XAxis title="Time Until Deadline" />
+        <YAxis
+          title="Time To Be Done"
+          tickFormat={function tickFormat(d) {
+            let date = new Date(null);
+            date.setSeconds(d);
+            return date.toISOString().substr(11, 5);
+          }}
+        />
+        {timeDoneForEachDayUntilTheDeadLine != undefined ? (
+          <LineSeries data={timeDoneForEachDayUntilTheDeadLine} />
+        ) : null}
+        {expectedTimeToBeDone != undefined ? (
+          <LineSeries data={expectedTimeToBeDone} />
+        ) : null}
+      </FlexibleXYPlot>
+      // <div>asdasd</div>
     );
   }
 }
