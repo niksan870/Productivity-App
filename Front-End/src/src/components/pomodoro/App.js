@@ -107,7 +107,7 @@ class App extends Component {
   submitTime() {
     let goalId = this.state.goalId;
 
-    console.log(goalId)
+    console.log(goalId);
     let timeDoneSoFar =
       this.state.sessionLength * 60 - this.state.timeLeftInSecond;
 
@@ -201,6 +201,7 @@ class App extends Component {
     //   },
     // })
     //   .then((response) => {
+    console.log(123123);
     let hours = parseInt(e.target.value.hours) * 3600;
     let minutes = (parseInt(e.target.value.minutes) % 3600) * 60;
     let time = hours + minutes;
@@ -223,8 +224,6 @@ class App extends Component {
     //   .catch((error) => {
     //     this.props.showNotification("Error: comment not approved", "warning");
     //   });
-
-
   }
 
   componentWillReceiveProps(props) {
@@ -236,7 +235,6 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state.showGraph);
     return (
       <div>
         <div className="pomodoro-clock">
@@ -279,7 +277,7 @@ class App extends Component {
             <FormControl style={{ minWidth: 220 }}>
               <InputLabel id="select-a-goal">
                 Choose a goal to work on
-                    </InputLabel>
+              </InputLabel>
               <Select
                 label="Choose a goal to work on"
                 name="goal"
@@ -300,9 +298,7 @@ class App extends Component {
                   : null
               }
             /> */}
-            {this.state.showGraph ? (
-              <Example />
-            ) : null}
+            {this.state.showGraph ? <Example /> : null}
           </Container>
         </Grid>
       </div>

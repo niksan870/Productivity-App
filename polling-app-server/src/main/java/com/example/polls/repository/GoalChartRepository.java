@@ -9,6 +9,6 @@ import java.util.UUID;
 
 @Repository
 public interface GoalChartRepository extends JpaRepository<GoalChart, UUID> {
-    @Query("SELECT g FROM GoalChart g join fetch g.goal_id = :id")
+    @Query("SELECT g FROM GoalChart g where goal_id = :#{#id}")
     GoalChart findByGoalChartByGoalId(UUID id);
 }

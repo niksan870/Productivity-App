@@ -38,8 +38,6 @@ public class Goal extends UserDateAudit {
 
     private boolean isPrivate;
 
-    @OneToOne(mappedBy = "goal", cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, optional = false)
     private GoalChart goalChart;
 
     @JsonIgnore

@@ -236,6 +236,14 @@ public class GoalsService {
 
         Goal updatedGoal = goalsRepository.save(goal);
 
+        GoalChart goalChart = new GoalChart();
+        goalChart.setTimeDone(updatedGoal.getTimeDone());
+        goalChart.setJsonData(updatedGoal.getJsonData());
+        goalChart.setTimeDoneForTheDay(updatedGoal.getTimeDoneForTheDay());
+        goalChart.setGoal(updatedGoal);
+
+        GoalChart goalChart1 = goalChartRepository.save(goalChart);
+
         return ObjectMapperUtils.map(updatedGoal, GoalResponse.class);
     }
 
@@ -266,7 +274,7 @@ public class GoalsService {
         }
     }
 
-    Map<Long, User> getGoalCreatorMap(Set<Goal> goals) {
+    private Map<Long, User> getGoalCreatorMap(Set<Goal> goals) {
         List<Long> creatorIds = goals.stream()
                 .map(Goal::getCreatedBy)
                 .distinct()

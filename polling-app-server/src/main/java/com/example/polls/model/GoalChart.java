@@ -22,7 +22,6 @@ public class GoalChart extends UserDateAudit {
     @Convert(converter= JSONObjectConverter.class)
     private JSONObject jsonData;
 
-
     private String timeDone;
 
     private String timeDoneForTheDay;
