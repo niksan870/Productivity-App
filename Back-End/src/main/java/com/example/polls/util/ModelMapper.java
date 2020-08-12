@@ -61,7 +61,7 @@ public class ModelMapper {
         goalResponse.setTitle(goal.getTitle());
         goalResponse.setHours(hoursAndMinutes[0]);
         goalResponse.setMinutes(hoursAndMinutes[1]);
-        goalResponse.setStringifiedJsonData(goal.getJsonData().toString());
+        goalResponse.setStringifiedJsonData("");
         goalResponse.setId(goal.getId());
 
         UserSummary creatorSummary = new UserSummary(creator.getId(), creator.getUsername(), creator.getUsername(), creator.getPicture());

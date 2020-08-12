@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -55,73 +56,6 @@ public class GoalsService {
 
     @Autowired
     private GoalResourceAssembler goalResourceAssembler;
-
-    public GoalResponse logTime(UUID id, TimeRequest time) {
-        GoalChart updateGoal = goalChartRepository.findByGoalChartByGoalId(id);
-
-        String addToTimeDone = updateGoal.getTimeDone();
-        String formattedTime = new TimeHandler().formattedTime(time);
-
-        if (addToTimeDone.isEmpty() || addToTimeDone == null) {
-            updateGoal.setTimeDone(formattedTime);
-            GoalChart goalToBeMapped = goalChartRepository.save(updateGoal);
-
-            return ObjectMapperUtils.map(goalToBeMapped, GoalResponse.class);
-        } else {
-            try {
-                String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-                TimeHandler time1 = TimeHandler.parse(formattedTime);
-                TimeHandler time2 = TimeHandler.parse(addToTimeDone);
-                String summedTime = time1.add(time2).toString();
-
-                JSONArray jsonArray = updateGoal.getJsonData().getJSONArray("dataGraph");
-                JSONArray newJSONArray = new JSONArray();
-                JSONObject json = new JSONObject();
-
-                for (int i = 0, size = jsonArray.length(); i < size; i++) {
-                    JSONObject objectInArray = jsonArray.getJSONObject(i);
-
-                    String[] elementNames = JSONObject.getNames(objectInArray);
-
-                    JSONObject item = new JSONObject();
-                    String date = "";
-                    String expectedV = "";
-                    boolean foundDate = false;
-                    for (String elementName : elementNames) {
-                        String value = objectInArray.getString(elementName);
-                        if (elementName.equals("x")) {
-                            if (currentDate.equals(value)) {
-                                foundDate = true;
-                            }
-                            date = value;
-                        }
-                        if (elementName.equals("y")) {
-                            if (foundDate == true) {
-                                expectedV = String.valueOf(Long.valueOf(time.getTime()).longValue() + Long.valueOf(value).longValue());
-                                foundDate = false;
-                            } else {
-                                expectedV = value;
-                            }
-                        }
-                    }
-                    item.put("date", date);
-                    item.put("y", expectedV);
-                    newJSONArray.put(item);
-                }
-
-                json.put("dataGraph", newJSONArray);
-                updateGoal.setJsonData(json);
-                updateGoal.setTimeDone(summedTime);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        GoalChart goalToBeMapped = goalChartRepository.save(updateGoal);
-
-        return ObjectMapperUtils.map(goalToBeMapped, GoalResponse.class);
-    }
-
 
     public DashboardLoaderDTO getCurrentUserGoalList(long userId) {
         User user = userProfileRepository.getOne(userId);
@@ -207,12 +141,15 @@ public class GoalsService {
         DateTime end = DateTime.parse(goalRequest.getDeadlineSetter());
         List<DateTime> between = TimeHandler.getDateRange(start, end);
 
+
+
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
 
         for (DateTime d : between) {
             JSONObject item = new JSONObject();
-            item.put("x", d.toString("yyyy-MM-dd"));
+            item.put("name", d.toString("yyyy-MM-dd"));
+            item.put("x", "0");
             item.put("y", "0");
             array.put(item);
         }
@@ -226,23 +163,27 @@ public class GoalsService {
 
         goal.setAttendees(list);
         goal.setDailyTimePerDay(goalRequest.getHours() + ":" + goalRequest.getMinutes());
-        goal.setJsonData(json);
-        goal.setTimeDone("0");
-        goal.setTimeDoneForTheDay("0");
         goal.setPrivate(goalRequest.isPrivate());
         goal.setDeadlineSetter(goalRequest.getDeadlineSetter());
         goal.setTitle(goalRequest.getTitle());
         goal.setDescription(goalRequest.getDescription());
 
         Goal updatedGoal = goalsRepository.save(goal);
+        long expectedTime = ((Long.parseLong(goalRequest.getHours()) / 3600) + (Long.parseLong(goalRequest.getMinutes()) / 60));
+
+        System.out.println("\n\n");
+        System.out.println(expectedTime);
+        System.out.println("\n\n");
 
         GoalChart goalChart = new GoalChart();
-        goalChart.setTimeDone(updatedGoal.getTimeDone());
-        goalChart.setJsonData(updatedGoal.getJsonData());
-        goalChart.setTimeDoneForTheDay(updatedGoal.getTimeDoneForTheDay());
+        goalChart.setTimeDone("0");
+        goalChart.setJsonData(json);
+        goalChart.setTimeDoneForTheDay("0");
         goalChart.setGoal(updatedGoal);
+        goalChart.setTimeExpectedToBeDone(expectedTime);
 
-        GoalChart goalChart1 = goalChartRepository.save(goalChart);
+
+        goalChartRepository.save(goalChart);
 
         return ObjectMapperUtils.map(updatedGoal, GoalResponse.class);
     }

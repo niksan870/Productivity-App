@@ -34,7 +34,7 @@ class App extends Component {
       isStart: false,
       goalId: null,
       showGraph: false,
-      goalData: null,
+      goalData: {},
       timerInterval: null,
       dailyTimeToBeReached: null,
       counter: -1,
@@ -107,14 +107,14 @@ class App extends Component {
   submitTime() {
     let goalId = this.state.goalId;
 
-    console.log(goalId);
+    // console.log(goalId);
     let timeDoneSoFar =
       this.state.sessionLength * 60 - this.state.timeLeftInSecond;
 
     let actualTimeDoneSoFar = timeDoneSoFar - this.state.timeDoneSoFar;
     axios({
       method: "put",
-      url: BASE_API_URL + "/goals/logTime/" + goalId,
+      url: BASE_API_URL + "/goalsChart/logTime/" + goalId,
       data: { time: actualTimeDoneSoFar },
       headers: {
         Authorization: "Bearer " + this.state.token,
@@ -125,7 +125,7 @@ class App extends Component {
         let minutes = (parseInt(response.data.minutes) % 3600) * 60;
         let time = hours + minutes;
         this.setState({
-          goalData: JSON.parse(response.data.stringifiedJsonData),
+          goalData: JSON.parse(response.data.jsonData),
           dailyTimeToBeReached: time,
           counter: 0,
           selectedGoal: response.data,
@@ -192,38 +192,37 @@ class App extends Component {
   }
 
   handleSelect(e) {
-    // axios({
-    //   method: "get",
-    //   url: BASE_API_AUTH_URL + "/goals/" + e.target.value,
-    //   data: {},
-    //   headers: {
-    //     Authorization: "Bearer " + this.state.token,
-    //   },
-    // })
-    //   .then((response) => {
-    console.log(123123);
-    let hours = parseInt(e.target.value.hours) * 3600;
-    let minutes = (parseInt(e.target.value.minutes) % 3600) * 60;
-    let time = hours + minutes;
+    axios({
+      method: "get",
+      url: BASE_API_URL + "/goalsChart/" + e.target.value.id,
+      data: {},
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+      },
+    })
+      .then((response) => {
+          let hours = parseInt(e.target.value.hours) * 3600;
+          let minutes = (parseInt(e.target.value.minutes) % 3600) * 60;
+          let time = hours + minutes;
 
-    this.setState({
-      goalData: JSON.parse(e.target.value.stringifiedJsonData),
-      selectedGoal: e.target.value,
-      dailyTimeToBeReached: time,
-      breakLength: Number.parseInt(this.props.defaultBreakLength, 10),
-      sessionLength: Number.parseInt(this.props.defaultSessionLength, 10),
-      timeLabel: "Session",
-      timeLeftInSecond:
-        Number.parseInt(this.props.defaultSessionLength, 10) * 60,
-      isStart: false,
-      timerInterval: null,
-      goalId: e.target.value.id,
-      showGraph: true,
-    });
-    //   })
-    //   .catch((error) => {
-    //     this.props.showNotification("Error: comment not approved", "warning");
-    //   });
+          this.setState({
+            goalData: JSON.parse(response.data.jsonData),
+            selectedGoal: e.target.value,
+            dailyTimeToBeReached: time,
+            breakLength: Number.parseInt(this.props.defaultBreakLength, 10),
+            sessionLength: Number.parseInt(this.props.defaultSessionLength, 10),
+            timeLabel: "Session",
+            timeLeftInSecond:
+              Number.parseInt(this.props.defaultSessionLength, 10) * 60,
+            isStart: false,
+            timerInterval: null,
+            goalId: e.target.value.id,
+            showGraph: true,
+          });
+        })
+      .catch((error) => {
+        this.props.showNotification("Error: comment not approved", "warning");
+      });
   }
 
   componentWillReceiveProps(props) {
@@ -287,18 +286,11 @@ class App extends Component {
                 id="select-a-goal"
               >
                 {this.props.goals.map((option) => (
-                  <MenuItem value={option}>{option.title}</MenuItem>
+                  <MenuItem key={option.title} value={option}>{option.title}</MenuItem>
                 ))}
               </Select>
             </FormControl>
-            {/* <GoalSection
-              data={
-                this.state.selectedGoal != null
-                  ? this.state.selectedGoal
-                  : null
-              }
-            /> */}
-            {this.state.showGraph ? <Example /> : null}
+            {this.state.showGraph ? <Example {...this.state.goalData} /> : null}
           </Container>
         </Grid>
       </div>

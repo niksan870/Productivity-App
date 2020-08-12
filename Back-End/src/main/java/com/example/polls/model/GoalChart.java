@@ -26,6 +26,8 @@ public class GoalChart extends UserDateAudit {
 
     private String timeDoneForTheDay;
 
+    private long timeExpectedToBeDone;
+
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     private Goal goal;
@@ -69,5 +71,13 @@ public class GoalChart extends UserDateAudit {
 
     public void setTimeDoneForTheDay(String timeDoneForTheDay) {
         this.timeDoneForTheDay = timeDoneForTheDay;
+    }
+
+    public long getTimeExpectedToBeDone() {
+        return timeExpectedToBeDone;
+    }
+
+    public void setTimeExpectedToBeDone(long timeExpectedToBeDone) {
+        this.timeExpectedToBeDone = timeExpectedToBeDone;
     }
 }

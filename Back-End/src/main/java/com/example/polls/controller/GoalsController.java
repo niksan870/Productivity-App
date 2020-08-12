@@ -23,14 +23,6 @@ public class GoalsController {
     @Autowired
     private GoalsService goalsService;
 
-    @PutMapping("/logTime/{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public GoalResponse logTime(@PathVariable UUID id,
-                               @RequestBody TimeRequest time) {
-       return goalsService.logTime(id, time);
-    }
-
     @GetMapping("getGoalsFromProfile/{id}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)

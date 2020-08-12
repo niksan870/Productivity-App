@@ -23,16 +23,16 @@ public class Goal extends UserDateAudit {
 
     private String description;
 
-    @NonNull
-    @Column(columnDefinition = "TEXT")
-    @Convert(converter= JSONObjectConverter.class)
-    private JSONObject jsonData;
+//    @NonNull
+//    @Column(columnDefinition = "TEXT")
+//    @Convert(converter= JSONObjectConverter.class)
+//    private JSONObject jsonData;
 
     private String dailyTimePerDay;
 
-    private String timeDone;
+//    private String timeDone;
 
-    private String timeDoneForTheDay;
+//    private String timeDoneForTheDay;
 
     private String deadlineSetter;
 
@@ -49,13 +49,13 @@ public class Goal extends UserDateAudit {
     )
     private Set<User> attendees = new HashSet<User>();
 
-    public String getTimeDone() {
-        return timeDone;
-    }
-
-    public void setTimeDone(String timeDone) {
-        this.timeDone = timeDone;
-    }
+//    public String getTimeDone() {
+//        return timeDone;
+//    }
+//
+//    public void setTimeDone(String timeDone) {
+//        this.timeDone = timeDone;
+//    }
 
     public String getTitle() {
         return title;
@@ -89,13 +89,13 @@ public class Goal extends UserDateAudit {
         this.dailyTimePerDay = dailyTimePerDay;
     }
 
-    public String getTimeDoneForTheDay() {
-        return timeDoneForTheDay;
-    }
-
-    public void setTimeDoneForTheDay(String timeDoneForTheDay) {
-        this.timeDoneForTheDay = timeDoneForTheDay;
-    }
+//    public String getTimeDoneForTheDay() {
+//        return timeDoneForTheDay;
+//    }
+//
+//    public void setTimeDoneForTheDay(String timeDoneForTheDay) {
+//        this.timeDoneForTheDay = timeDoneForTheDay;
+//    }
 
     public String getDeadlineSetter() {
         return deadlineSetter;
@@ -113,14 +113,14 @@ public class Goal extends UserDateAudit {
         isPrivate = aPrivate;
     }
 
-    @NonNull
-    public JSONObject getJsonData() {
-        return jsonData;
-    }
-
-    public void setJsonData(@NonNull JSONObject jsonData) {
-        this.jsonData = jsonData;
-    }
+//    @NonNull
+//    public JSONObject getJsonData() {
+//        return jsonData;
+//    }
+//
+//    public void setJsonData(@NonNull JSONObject jsonData) {
+//        this.jsonData = jsonData;
+//    }
 
     public Set<User> getAttendees() {
         return attendees;

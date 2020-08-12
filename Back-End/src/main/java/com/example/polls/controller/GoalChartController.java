@@ -1,5 +1,7 @@
 package com.example.polls.controller;
 
+import com.example.polls.dto.TimeRequest;
+import com.example.polls.dto.goal.GoalChartDTO;
 import com.example.polls.dto.goal.GoalResponse;
 import com.example.polls.service.GoalChartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/goalschart")
+@RequestMapping("api/goalsChart")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GoalChartController {
 
@@ -20,8 +22,17 @@ public class GoalChartController {
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public GoalResponse getOne(@PathVariable UUID id) {
+    public GoalChartDTO getOne(@PathVariable UUID id) {
         return goalChartService.getOne(id);
+    }
+
+
+    @PutMapping("/logTime/{id}")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseStatus(HttpStatus.OK)
+    public GoalChartDTO logTime(@PathVariable UUID id,
+                                @RequestBody TimeRequest time) {
+        return goalChartService.logTime(id, time);
     }
 
 }

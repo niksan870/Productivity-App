@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
+import Moment from 'react-moment';
 
 const data = [
     {
@@ -28,14 +29,18 @@ const data = [
 ];
 
 export default class Example extends PureComponent {
+    constructor(props) {
+        super(props);
+    }    
     static jsfiddleUrl = 'https://jsfiddle.net/alidingling/xqjtetw0/';
 
     render() {
+        console.log(this.props.dataGraph)
         return (
             <LineChart
                 width={500}
                 height={300}
-                data={data}
+                data={this.props.dataGraph}
                 margin={{
                     top: 5, right: 30, left: 20, bottom: 5,
                 }}
@@ -45,9 +50,13 @@ export default class Example extends PureComponent {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-                <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+                <Line type="monotone" dataKey="y"  tickFormatter={formatXAxis} stroke="#8884d8" activeDot={{ r: 8 }} />
+                {/* <Line type="monotone" dataKey="uv" stroke="#82ca9d" /> */}
             </LineChart>
         );
     }
+}
+
+function formatXAxis(tickItem) {
+    return Moment(tickItem).format('HH:mm:ss')
 }

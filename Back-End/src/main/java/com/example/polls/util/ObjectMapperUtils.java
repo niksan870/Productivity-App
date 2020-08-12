@@ -40,7 +40,7 @@ public class ObjectMapperUtils {
         return modelMapper.map(entity, outClass);
     }
 
-    /**
+    /**GoalResponse
      * <p>Note: outClass object must have default constructor with no arguments</p>
      *
      * @param <D>        type of objects in result list
