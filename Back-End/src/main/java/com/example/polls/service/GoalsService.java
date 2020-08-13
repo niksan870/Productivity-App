@@ -141,16 +141,15 @@ public class GoalsService {
         DateTime end = DateTime.parse(goalRequest.getDeadlineSetter());
         List<DateTime> between = TimeHandler.getDateRange(start, end);
 
-
+        float expectedTime = (((Float.parseFloat(goalRequest.getHours()) * 3600) + (Float.parseFloat(goalRequest.getMinutes()) * 60)) / 3600);
 
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
-
         for (DateTime d : between) {
             JSONObject item = new JSONObject();
             item.put("name", d.toString("yyyy-MM-dd"));
-            item.put("x", "0");
-            item.put("y", "0");
+            item.put("x", expectedTime);
+            item.put("y", 0);
             array.put(item);
         }
 
@@ -160,7 +159,6 @@ public class GoalsService {
         list.add(userPrincipal.getCurrentUserPrincipal());
 
         Goal goal = new Goal();
-
         goal.setAttendees(list);
         goal.setDailyTimePerDay(goalRequest.getHours() + ":" + goalRequest.getMinutes());
         goal.setPrivate(goalRequest.isPrivate());
@@ -169,29 +167,14 @@ public class GoalsService {
         goal.setDescription(goalRequest.getDescription());
 
         Goal updatedGoal = goalsRepository.save(goal);
-        long expectedTime = ((Long.parseLong(goalRequest.getHours()) / 3600) + (Long.parseLong(goalRequest.getMinutes()) / 60));
-
-        System.out.println("\n\n");
-        System.out.println(expectedTime);
-        System.out.println("\n\n");
-
-        GoalChart goalChart = new GoalChart();
-        goalChart.setTimeDone("0");
-        goalChart.setJsonData(json);
-        goalChart.setTimeDoneForTheDay("0");
-        goalChart.setGoal(updatedGoal);
-        goalChart.setTimeExpectedToBeDone(expectedTime);
-
+        GoalChart goalChart = new GoalChart(json, "0", "0", expectedTime, goal);
 
         goalChartRepository.save(goalChart);
-
         return ObjectMapperUtils.map(updatedGoal, GoalResponse.class);
     }
 
-    public GoalResponse update(GoalRequest goalRequest,
-                       UUID id) {
+    public GoalResponse update(GoalRequest goalRequest, UUID id) {
         Goal goal = goalsRepository.findOneById(id);
-
         goal.setTitle(goalRequest.getTitle());
         goal.setDescription(goalRequest.getDescription());
         goal.setPrivate(goalRequest.isPrivate());

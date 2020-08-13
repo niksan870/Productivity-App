@@ -26,11 +26,22 @@ public class GoalChart extends UserDateAudit {
 
     private String timeDoneForTheDay;
 
-    private long timeExpectedToBeDone;
+    private float timeExpectedToBeDone;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     private Goal goal;
+
+    public GoalChart() {
+    }
+
+    public GoalChart(@NonNull JSONObject jsonData, String timeDone, String timeDoneForTheDay, float timeExpectedToBeDone, Goal goal) {
+        this.jsonData = jsonData;
+        this.timeDone = timeDone;
+        this.timeDoneForTheDay = timeDoneForTheDay;
+        this.timeExpectedToBeDone = timeExpectedToBeDone;
+        this.goal = goal;
+    }
 
     public UUID getId() {
         return id;
@@ -73,11 +84,11 @@ public class GoalChart extends UserDateAudit {
         this.timeDoneForTheDay = timeDoneForTheDay;
     }
 
-    public long getTimeExpectedToBeDone() {
+    public float getTimeExpectedToBeDone() {
         return timeExpectedToBeDone;
     }
 
-    public void setTimeExpectedToBeDone(long timeExpectedToBeDone) {
+    public void setTimeExpectedToBeDone(float timeExpectedToBeDone) {
         this.timeExpectedToBeDone = timeExpectedToBeDone;
     }
 }

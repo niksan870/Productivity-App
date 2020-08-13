@@ -52,26 +52,33 @@ public class GoalChartService {
 
                     JSONObject item = new JSONObject();
                     String date = "";
-                    String expectedV = "";
+                    long expectedV = 0;
+                    long timeExpectedToBeDone = 0;
                     boolean foundDate = false;
                     for (String elementName : elementNames) {
-                        String value = objectInArray.getString(elementName);
                         if (elementName.equals("name")) {
+                            String value = objectInArray.getString(elementName);
                             if (currentDate.equals(value)) {
                                 foundDate = true;
                             }
                             date = value;
                         }
                         if (elementName.equals("y")) {
+                            long value = objectInArray.getLong(elementName);
                             if (foundDate == true) {
-                                expectedV = String.valueOf(Long.valueOf(time.getTime()).longValue() + Long.valueOf(value).longValue());
+                                expectedV = Long.valueOf(time.getTime()).longValue() + value;
                                 foundDate = false;
                             } else {
                                 expectedV = value;
                             }
                         }
+                        if (elementName.equals("x")) {
+                            long value = objectInArray.getLong(elementName);
+                            timeExpectedToBeDone = value;
+                        }
                     }
                     item.put("name", date);
+                    item.put("x", timeExpectedToBeDone);
                     item.put("y", expectedV);
                     newJSONArray.put(item);
                 }
@@ -85,7 +92,6 @@ public class GoalChartService {
         }
 
         GoalChart goalToBeMapped = goalChartRepository.save(updateGoal);
-
         return ObjectMapperUtils.map(goalToBeMapped, GoalChartDTO.class);
     }
 

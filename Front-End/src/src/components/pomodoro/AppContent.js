@@ -72,8 +72,10 @@ export default class AppContent extends Component {
     })
       .then((response) => {
         let pomodorosResponse = response.data;
-        this.setState({ ...this.state, [pomodorosResponse]: pomodorosResponse });
-
+        this.setState({
+          ...this.state,
+          [pomodorosResponse]: pomodorosResponse,
+        });
       })
       .catch((error) => {
         showNotification("Error: comment not approved", "warning");
@@ -81,7 +83,6 @@ export default class AppContent extends Component {
   }
 
   render() {
-
     return (
       <Query type="getOne" resource="goals" payload={{ id: "mine" }}>
         {({ data, loading, error }) => {
@@ -104,7 +105,6 @@ export default class AppContent extends Component {
             },
           }));
 
-          console.log(data);
           if (data != null) {
             return (
               <div className={classes.root}>
@@ -146,11 +146,11 @@ export default class AppContent extends Component {
                               id="select-a-goal"
                             >
                               {data.pomodoros != null
-                                ? data.pomodoros.map((option) => (
-                                  <MenuItem value={option.id}>
-                                    {option.title}
-                                  </MenuItem>
-                                ))
+                                ? data.pomodoros.map((option, index) => (
+                                    <MenuItem key={index} value={option.id}>
+                                      {option.title}
+                                    </MenuItem>
+                                  ))
                                 : null}
                             </Select>
                           </FormControl>
@@ -171,11 +171,11 @@ export default class AppContent extends Component {
                               id="select-a-goal"
                             >
                               {data.pomodoroMusic != null
-                                ? data.pomodoroMusic.map((option) => (
-                                  <MenuItem value={option.url}>
-                                    {option.title}
-                                  </MenuItem>
-                                ))
+                                ? data.pomodoroMusic.map((option, index) => (
+                                    <MenuItem key={index} value={option.url}>
+                                      {option.title}
+                                    </MenuItem>
+                                  ))
                                 : null}
                             </Select>
                           </FormControl>

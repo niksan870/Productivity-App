@@ -5,17 +5,15 @@ import Controller from "./Controller";
 import axios from "axios";
 import "./App.css";
 import { Query, Loading, Error, showNotification } from "react-admin";
-import Chart from "./Chart";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import GoalSection from "./GoalSection";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import { BASE_API_AUTH_URL, BASE_API_URL } from "../../../constants";
+import { BASE_API_URL } from "../../../constants";
 import Example from "./Example";
 
 class App extends Component {
@@ -38,6 +36,7 @@ class App extends Component {
       timerInterval: null,
       dailyTimeToBeReached: null,
       counter: -1,
+      minuteCounter: Number.parseInt(this.props.defaultSessionLength, 10),
       selectedGoal: null,
       token: localStorage.getItem("accessToken"),
     };
@@ -107,7 +106,6 @@ class App extends Component {
   submitTime() {
     let goalId = this.state.goalId;
 
-    // console.log(goalId);
     let timeDoneSoFar =
       this.state.sessionLength * 60 - this.state.timeLeftInSecond;
 
@@ -165,12 +163,21 @@ class App extends Component {
   }
 
   decreaseTimer() {
-    this.setState({
-      timeLeftInSecond: this.state.timeLeftInSecond - 1,
-      counter: this.state.counter + 1,
-      timeDoneSoFar:
-        this.state.sessionLength * 60 - this.state.timeLeftInSecond,
-    });
+    if (this.state.minuteCounter - 1 == this.state.timeLeftInSecond / 60) {
+      console.log(this.state.timeLeftInSecond / 60);
+      this.setState({
+        timeLeftInSecond: this.state.timeLeftInSecond - 1,
+        counter: this.state.counter + 1,
+        timeDoneSoFar: 60,
+      });
+    } else {
+      this.setState({
+        timeLeftInSecond: this.state.timeLeftInSecond - 1,
+        counter: this.state.counter + 1,
+        timeDoneSoFar:
+          this.state.sessionLength * 60 - this.state.timeLeftInSecond,
+      });
+    }
   }
 
   phaseControl() {
@@ -201,25 +208,25 @@ class App extends Component {
       },
     })
       .then((response) => {
-          let hours = parseInt(e.target.value.hours) * 3600;
-          let minutes = (parseInt(e.target.value.minutes) % 3600) * 60;
-          let time = hours + minutes;
+        let hours = parseInt(e.target.value.hours) * 3600;
+        let minutes = (parseInt(e.target.value.minutes) % 3600) * 60;
+        let time = hours + minutes;
 
-          this.setState({
-            goalData: JSON.parse(response.data.jsonData),
-            selectedGoal: e.target.value,
-            dailyTimeToBeReached: time,
-            breakLength: Number.parseInt(this.props.defaultBreakLength, 10),
-            sessionLength: Number.parseInt(this.props.defaultSessionLength, 10),
-            timeLabel: "Session",
-            timeLeftInSecond:
-              Number.parseInt(this.props.defaultSessionLength, 10) * 60,
-            isStart: false,
-            timerInterval: null,
-            goalId: e.target.value.id,
-            showGraph: true,
-          });
-        })
+        this.setState({
+          goalData: JSON.parse(response.data.jsonData),
+          selectedGoal: e.target.value,
+          dailyTimeToBeReached: time,
+          breakLength: Number.parseInt(this.props.defaultBreakLength, 10),
+          sessionLength: Number.parseInt(this.props.defaultSessionLength, 10),
+          timeLabel: "Session",
+          timeLeftInSecond:
+            Number.parseInt(this.props.defaultSessionLength, 10) * 60,
+          isStart: false,
+          timerInterval: null,
+          goalId: e.target.value.id,
+          showGraph: true,
+        });
+      })
       .catch((error) => {
         this.props.showNotification("Error: comment not approved", "warning");
       });
@@ -285,8 +292,10 @@ class App extends Component {
                 className="form-control"
                 id="select-a-goal"
               >
-                {this.props.goals.map((option) => (
-                  <MenuItem key={option.title} value={option}>{option.title}</MenuItem>
+                {this.props.goals.map((option, index) => (
+                  <MenuItem key={index} value={option}>
+                    {option.title}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
