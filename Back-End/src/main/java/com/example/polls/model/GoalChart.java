@@ -2,6 +2,7 @@ package com.example.polls.model;
 
 import com.example.polls.model.audit.UserDateAudit;
 import com.example.polls.util.JSONObjectConverter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.json.JSONObject;
 import org.springframework.lang.NonNull;
@@ -22,12 +23,13 @@ public class GoalChart extends UserDateAudit {
     @Convert(converter= JSONObjectConverter.class)
     private JSONObject jsonData;
 
-    private String timeDone;
+    private float timeDone;
 
-    private String timeDoneForTheDay;
+    private float timeDoneForTheDay;
 
     private float timeExpectedToBeDone;
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     private Goal goal;
@@ -35,7 +37,7 @@ public class GoalChart extends UserDateAudit {
     public GoalChart() {
     }
 
-    public GoalChart(@NonNull JSONObject jsonData, String timeDone, String timeDoneForTheDay, float timeExpectedToBeDone, Goal goal) {
+    public GoalChart(@NonNull JSONObject jsonData, float timeDone, float timeDoneForTheDay, float timeExpectedToBeDone, Goal goal) {
         this.jsonData = jsonData;
         this.timeDone = timeDone;
         this.timeDoneForTheDay = timeDoneForTheDay;
@@ -68,19 +70,19 @@ public class GoalChart extends UserDateAudit {
         this.goal = goal;
     }
 
-    public String getTimeDone() {
+    public float getTimeDone() {
         return timeDone;
     }
 
-    public void setTimeDone(String timeDone) {
+    public void setTimeDone(float timeDone) {
         this.timeDone = timeDone;
     }
 
-    public String getTimeDoneForTheDay() {
+    public float getTimeDoneForTheDay() {
         return timeDoneForTheDay;
     }
 
-    public void setTimeDoneForTheDay(String timeDoneForTheDay) {
+    public void setTimeDoneForTheDay(float timeDoneForTheDay) {
         this.timeDoneForTheDay = timeDoneForTheDay;
     }
 

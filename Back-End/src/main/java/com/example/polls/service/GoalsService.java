@@ -148,8 +148,8 @@ public class GoalsService {
         for (DateTime d : between) {
             JSONObject item = new JSONObject();
             item.put("name", d.toString("yyyy-MM-dd"));
-            item.put("x", expectedTime);
-            item.put("y", 0);
+            item.put("expectedTime", expectedTime);
+            item.put("timeDone", 0);
             array.put(item);
         }
 
@@ -167,9 +167,10 @@ public class GoalsService {
         goal.setDescription(goalRequest.getDescription());
 
         Goal updatedGoal = goalsRepository.save(goal);
-        GoalChart goalChart = new GoalChart(json, "0", "0", expectedTime, goal);
+        GoalChart goalChart = new GoalChart(json, 0, 0, expectedTime, goal);
 
         goalChartRepository.save(goalChart);
+
         return ObjectMapperUtils.map(updatedGoal, GoalResponse.class);
     }
 

@@ -152,8 +152,6 @@ export const GoalShow = (props) => {
           <TextField label="Goal Status" source="private" />
           <TextField label="Description" source="description" />
           <TextField label="How Much Time Per Day" source="dailyTimePerDay" />
-          <TextField label="Time Done So Far" source="timeDone" />
-          <TextField label="Time Done For The Day" source="timeDoneForTheDay" />
           <TextField label="Deadline Date" source="deadlineSetter" />
           <FormDialog />
         </Tab>
@@ -171,7 +169,20 @@ export const GoalShow = (props) => {
             </Datagrid>
           </ReferenceManyField>
         </Tab>
-        <Tab label="Graph"></Tab>
+        <Tab label="Participants' Graphs">
+          <ReferenceManyField
+            label="Participants' Graphs"
+            reference="goalsChart"
+            target="id"
+            filter={{ method: "getGoalCharts" }}
+          >
+            <Datagrid>
+              <ImageField source="picture" title="Participant" />
+              <TextField label="name" source="name" />
+              <ShowButton />
+            </Datagrid>
+          </ReferenceManyField>
+        </Tab>
       </TabbedShowLayout>
     </Show>
   );

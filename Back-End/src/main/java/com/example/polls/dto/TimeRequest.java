@@ -1,13 +1,13 @@
 package com.example.polls.dto;
 
 public class TimeRequest {
-    private int time;
+    private float time;
 
-    public int getTime() {
+    public float getTime() {
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(float time) {
         this.time = time;
     }
 }

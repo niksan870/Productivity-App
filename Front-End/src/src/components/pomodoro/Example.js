@@ -11,35 +11,37 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  Line,
+  LineChart,
 } from "recharts";
 
 const Example = (props) => {
   return (
-    <ResponsiveContainer width="95%" height={500}>
-      <ScatterChart>
-        <XAxis
-          dataKey="time"
-          name="Time"
-          type="number"
-          tickFormatter={formatXAxis}
-        />
-        <YAxis dataKey="value" name="Value" />
-        <Tooltip />
-        <Scatter
-          data={props.dataGraph}
-          line={{ stroke: "#eee" }}
-          lineJointType="monotoneX"
-          lineType="joint"
-          name="Values"
-        />
-      </ScatterChart>
-    </ResponsiveContainer>
+    <LineChart
+      width={500}
+      height={300}
+      data={props.dataGraph}
+      margin={{
+        top: 5,
+        right: 30,
+        left: 20,
+        bottom: 5,
+      }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="name" />
+      <YAxis />
+      <Tooltip />
+      <Legend />
+      <Line
+        type="monotone"
+        dataKey="expectedTime"
+        stroke="#8884d8"
+        activeDot={{ r: 8 }}
+      />
+      <Line type="monotone" dataKey="timeDone" stroke="#82ca9d" />
+    </LineChart>
   );
 };
-
-function formatXAxis(tickItem) {
-  // If using moment.js
-  return moment(tickItem).format("HH:mm:ss");
-}
 
 export default Example;

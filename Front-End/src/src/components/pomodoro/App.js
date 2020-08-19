@@ -25,6 +25,8 @@ class App extends Component {
     this.state = {
       breakLength: Number.parseInt(this.props.defaultBreakLength, 10),
       sessionLength: Number.parseInt(this.props.defaultSessionLength, 10),
+      sessionLengthTracker:
+        Number.parseInt(this.props.defaultSessionLength, 10) - 1,
       timeLabel: "Session",
       timeLeftInSecond:
         Number.parseInt(this.props.defaultSessionLength, 10) * 60,
@@ -110,10 +112,11 @@ class App extends Component {
       this.state.sessionLength * 60 - this.state.timeLeftInSecond;
 
     let actualTimeDoneSoFar = timeDoneSoFar - this.state.timeDoneSoFar;
+    console.log(actualTimeDoneSoFar);
     axios({
       method: "put",
       url: BASE_API_URL + "/goalsChart/logTime/" + goalId,
-      data: { time: actualTimeDoneSoFar },
+      data: { time: actualTimeDoneSoFar / 60 },
       headers: {
         Authorization: "Bearer " + this.state.token,
       },
@@ -123,7 +126,9 @@ class App extends Component {
         let minutes = (parseInt(response.data.minutes) % 3600) * 60;
         let time = hours + minutes;
         this.setState({
+          ...this.state,
           goalData: JSON.parse(response.data.jsonData),
+          sessionLengthTracker: Math.ceil(this.state.timeLeftInSecond / 60 - 1),
           dailyTimeToBeReached: time,
           counter: 0,
           selectedGoal: response.data,
@@ -142,10 +147,14 @@ class App extends Component {
           timerInterval: setInterval(() => {
             this.decreaseTimer();
             this.phaseControl();
-            if (this.state.timeLabel == "Session") {
+            if (
+              this.state.timeLabel == "Session" &&
+              this.state.timeLeftInSecond / 60 ===
+                this.state.sessionLengthTracker
+            ) {
               this.submitTime();
             }
-          }, 100),
+          }, 50),
         });
       } else {
         this.props.showNotification("Choose a goal to work on", "warning");
@@ -164,7 +173,6 @@ class App extends Component {
 
   decreaseTimer() {
     if (this.state.minuteCounter - 1 == this.state.timeLeftInSecond / 60) {
-      console.log(this.state.timeLeftInSecond / 60);
       this.setState({
         timeLeftInSecond: this.state.timeLeftInSecond - 1,
         counter: this.state.counter + 1,
