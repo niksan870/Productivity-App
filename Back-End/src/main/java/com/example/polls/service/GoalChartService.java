@@ -66,12 +66,13 @@ public class GoalChartService {
         return ObjectMapperUtils.map(goalToBeMapped, GoalChartDTO.class);
     }
 
-    public Page<GoalChart> getGoalCharts(int pageNo, int pageSize, UUID id) {
+    public Page<GoalChartDTO> getGoalCharts(int pageNo, int pageSize, UUID id) {
         validatePageNumberAndSize(pageNo, pageSize);
 
         List<GoalChart> goalCharts = goalChartRepository.findAllById(id);
+        List<GoalChartDTO> goalChartDTOS = ObjectMapperUtils.mapAll(goalCharts, GoalChartDTO.class);
 
-        return new PageImpl<>(goalCharts);
+        return new PageImpl<>(goalChartDTOS);
     }
 
     public GoalChartDTO getOne(UUID id) {

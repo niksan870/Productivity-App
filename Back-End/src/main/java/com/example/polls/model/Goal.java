@@ -29,7 +29,13 @@ public class Goal extends UserDateAudit {
 
     private boolean isPrivate;
 
-    private GoalChart goalChart;
+    @JsonIgnore
+    @OneToMany(
+            mappedBy = "goal",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<GoalChart> goalCharts = new ArrayList<>();
 
     @JsonIgnore
     @ManyToMany
@@ -96,11 +102,11 @@ public class Goal extends UserDateAudit {
         this.attendees = attendees;
     }
 
-    public GoalChart getGoalChart() {
-        return goalChart;
+    public List<GoalChart> getGoalCharts() {
+        return goalCharts;
     }
 
-    public void setGoalChart(GoalChart goalChart) {
-        this.goalChart = goalChart;
+    public void setGoalCharts(List<GoalChart> goalCharts) {
+        this.goalCharts = goalCharts;
     }
 }

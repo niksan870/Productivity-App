@@ -29,9 +29,9 @@ public class GoalChart extends UserDateAudit {
 
     private float timeExpectedToBeDone;
 
+
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
+    @ManyToOne(fetch = FetchType.LAZY)
     private Goal goal;
 
     public GoalChart() {

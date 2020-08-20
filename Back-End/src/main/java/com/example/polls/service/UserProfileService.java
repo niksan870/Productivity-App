@@ -1,6 +1,7 @@
 package com.example.polls.service;
 
 import com.example.polls.dto.user.UserProfileDTO;
+import com.example.polls.exception.BadRequestException;
 import com.example.polls.exception.ResourceNotFoundException;
 import com.example.polls.model.User;
 import com.example.polls.repository.GoalsRepository;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public
@@ -49,9 +51,23 @@ class UserProfileService {
         return new PageImpl<>(listOfPostDTO);
     }
 
+    public void getGoalsWithProfilesAndGraphs(int pageNo, int pageSize, UUID id) {
+        validatePageNumberAndSize(pageNo, pageSize);
+
+        System.out.println("getGoalsWithProfilesAndGraphs");
+        List<User> users = goalsRepository.getParticipants(id);
+        List<Long> ids = users.stream()
+                .map(User::getId).collect(Collectors.toList());
+
+        System.out.println(ids.toString());
+//
+//        List<GoalChart> goalCharts = goalsRepository.getGoalsWithProfilesAndGraphs(ids);
+
+//        return new PageImpl<>(goalResponses);
+    }
+
 
     public Page<UserProfileDTO> getParticipants(UUID id) {
-
         List<User> attendees = goalsRepository.getParticipants( id);
         List<UserProfileDTO> listOfPostDTO = ObjectMapperUtils.mapAll(attendees, UserProfileDTO.class);
         final Page<UserProfileDTO> page = new PageImpl<>(listOfPostDTO);
@@ -103,11 +119,17 @@ class UserProfileService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));;
 
         if ((currentUser.getId() == userProfileToBeDeleted.getId()) || (currentUser.getRoles().toString().indexOf("ADMIN") == 1)) {
-
             userRepository.save(userProfileToBeDeleted);
             return new ResponseEntity("Successfully deleted users profile", HttpStatus.OK);
         } else {
             return new ResponseEntity("Cannot Delete other user profiles!", HttpStatus.UNAUTHORIZED);
         }
     }
+
+    private void validatePageNumberAndSize(int page, int size) {
+        if(page < 0) {
+            throw new BadRequestException("Page number cannot be less than zero.");
+        }
+    }
+
 }

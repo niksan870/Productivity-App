@@ -10,13 +10,17 @@ import {
   EditButton,
   SelectInput,
   Show,
+  List,
   ShowButton,
   SimpleShowLayout,
   TabbedShowLayout,
+  ReferenceField,
   ReferenceManyField,
   ImageField,
   SingleFieldList,
   ChipField,
+  BooleanField,
+  NumberField,
   DateField,
   Datagrid,
   Tab,
@@ -26,6 +30,7 @@ import {
 } from "react-admin";
 import { makeStyles, Chip } from "@material-ui/core";
 import FormDialog from "../lists/FormDialog";
+import Example from "../components/pomodoro/Example";
 
 const required = (message = "Required") => (value) =>
   value ? undefined : message;
@@ -171,14 +176,18 @@ export const GoalShow = (props) => {
         </Tab>
         <Tab label="Participants' Graphs">
           <ReferenceManyField
-            label="Participants' Graphs"
-            reference="goalsChart"
+            label="Participants"
+            reference="profiles"
             target="id"
-            filter={{ method: "getGoalCharts" }}
+            filter={{ method: "getGoalsWithProfilesAndGraphs" }}
           >
-            <Datagrid>
-              <ImageField source="picture" title="Participant" />
-              <TextField label="name" source="name" />
+            <Datagrid expand={<PostPanel />}>
+              <TextField source="id" />
+              <TextField source="title" />
+              <DateField source="published_at" />
+              <BooleanField source="commentable" />
+              <NumberField source="views" />
+              <EditButton />
               <ShowButton />
             </Datagrid>
           </ReferenceManyField>
@@ -187,3 +196,7 @@ export const GoalShow = (props) => {
     </Show>
   );
 };
+
+const PostPanel = ({ id, record, resource }) => (
+  <div dangerouslySetInnerHTML={{ __html: record.body }} />
+);

@@ -44,7 +44,6 @@ public class GoalsController {
         return goalsService.getPage(page, pageSize, filterParams);
     }
 
-
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)

@@ -31,7 +31,7 @@ public class GoalChartController {
     @GetMapping("/getGoalCharts/{id}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public Page<GoalChart> getGoalCharts(@RequestParam int page, @RequestParam int pageSize, @PathVariable UUID id) {
+    public Page<GoalChartDTO> getGoalCharts(@RequestParam int page, @RequestParam int pageSize, @PathVariable UUID id) {
         return goalChartService.getGoalCharts(page, pageSize, id);
     }
 

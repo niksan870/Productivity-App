@@ -27,6 +27,14 @@ public class UserProfileController {
     @Autowired
     private UserProfileService userProfileService;
 
+    @GetMapping("/getGoalsWithProfilesAndGraphs/{id}")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseStatus(HttpStatus.OK)
+    public void getGoalsWithProfilesAndGraphs(@RequestParam int page, @RequestParam int pageSize, @PathVariable UUID id) {
+        userProfileService.getGoalsWithProfilesAndGraphs(page, pageSize, id);
+    }
+
+
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
