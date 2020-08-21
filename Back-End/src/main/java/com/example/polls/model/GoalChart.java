@@ -3,6 +3,7 @@ package com.example.polls.model;
 import com.example.polls.model.audit.UserDateAudit;
 import com.example.polls.util.JSONObjectConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.GenericGenerator;
 import org.json.JSONObject;
 import org.springframework.lang.NonNull;
@@ -29,20 +30,22 @@ public class GoalChart extends UserDateAudit {
 
     private float timeExpectedToBeDone;
 
-
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private Goal goal;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
     public GoalChart() {
     }
 
-    public GoalChart(@NonNull JSONObject jsonData, float timeDone, float timeDoneForTheDay, float timeExpectedToBeDone, Goal goal) {
+    public GoalChart(User user, @NonNull JSONObject jsonData, float timeDone, float timeDoneForTheDay, float timeExpectedToBeDone, Goal goal) {
         this.jsonData = jsonData;
         this.timeDone = timeDone;
         this.timeDoneForTheDay = timeDoneForTheDay;
         this.timeExpectedToBeDone = timeExpectedToBeDone;
         this.goal = goal;
+        this.user = user;
     }
 
     public UUID getId() {
@@ -92,5 +95,13 @@ public class GoalChart extends UserDateAudit {
 
     public void setTimeExpectedToBeDone(float timeExpectedToBeDone) {
         this.timeExpectedToBeDone = timeExpectedToBeDone;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

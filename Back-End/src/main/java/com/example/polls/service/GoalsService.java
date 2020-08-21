@@ -167,7 +167,7 @@ public class GoalsService {
         goal.setDescription(goalRequest.getDescription());
 
         Goal updatedGoal = goalsRepository.save(goal);
-        GoalChart goalChart = new GoalChart(json, 0, 0, expectedTime, goal);
+        GoalChart goalChart = new GoalChart(userPrincipal.getCurrentUserPrincipal(), json, 0, 0, expectedTime, goal);
 
         goalChartRepository.save(goalChart);
 

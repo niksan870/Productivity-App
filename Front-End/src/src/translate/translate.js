@@ -48,6 +48,8 @@ export const englishMessages = {
       confirm: "Confirm",
       cancel: "Cancel",
       back: "Back",
+      expand: "Expand",
+      close: "Close",
     },
     navigation: {
       page_rows_per_page: "Rows per page",

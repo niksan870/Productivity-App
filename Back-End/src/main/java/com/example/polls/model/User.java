@@ -9,9 +9,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name= "users", uniqueConstraints = {
@@ -75,6 +73,15 @@ public class User extends DateAudit {
     @JsonIgnore
     @ManyToMany(mappedBy = "attendees")
     private Set<Goal> sub_goals = new HashSet<>();
+
+
+    @JsonIgnore
+    @OneToMany(
+            mappedBy = "goal",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<GoalChart> goalCharts = new ArrayList<>();
 
     public User() {
 
@@ -191,5 +198,14 @@ public class User extends DateAudit {
 
     public void setsub_goals(Set<Goal> sub_goals) {
         this.sub_goals = sub_goals;
+    }
+
+
+    public List<GoalChart> getGoalCharts() {
+        return goalCharts;
+    }
+
+    public void setGoalCharts(List<GoalChart> goalCharts) {
+        this.goalCharts = goalCharts;
     }
 }

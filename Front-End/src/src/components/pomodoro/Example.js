@@ -16,11 +16,12 @@ import {
 } from "recharts";
 
 const Example = (props) => {
+  let dataGraph = JSON.parse(props.jsonData).dataGraph;
   return (
     <LineChart
       width={500}
       height={300}
-      data={props.dataGraph}
+      data={dataGraph}
       margin={{
         top: 5,
         right: 30,

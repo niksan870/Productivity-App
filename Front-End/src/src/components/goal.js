@@ -30,6 +30,7 @@ import {
 } from "react-admin";
 import { makeStyles, Chip } from "@material-ui/core";
 import FormDialog from "../lists/FormDialog";
+import { CustomFieldLinker } from "../fields/CustomImageField";
 import Example from "../components/pomodoro/Example";
 
 const required = (message = "Required") => (value) =>
@@ -168,8 +169,7 @@ export const GoalShow = (props) => {
             filter={{ method: "getParticipants" }}
           >
             <Datagrid>
-              <ImageField source="picture" title="Participant" />
-              <TextField label="name" source="name" />
+              <CustomFieldLinker method="profiles" />
               <ShowButton />
             </Datagrid>
           </ReferenceManyField>
@@ -182,13 +182,9 @@ export const GoalShow = (props) => {
             filter={{ method: "getGoalsWithProfilesAndGraphs" }}
           >
             <Datagrid expand={<PostPanel />}>
-              <TextField source="id" />
-              <TextField source="title" />
-              <DateField source="published_at" />
-              <BooleanField source="commentable" />
-              <NumberField source="views" />
-              <EditButton />
-              <ShowButton />
+              <CustomFieldLinker method="user" />
+              <TextField source="goal.dailyTimePerDay" />
+              <TextField source="goal.deadlineSetter" />
             </Datagrid>
           </ReferenceManyField>
         </Tab>
@@ -197,6 +193,8 @@ export const GoalShow = (props) => {
   );
 };
 
-const PostPanel = ({ id, record, resource }) => (
-  <div dangerouslySetInnerHTML={{ __html: record.body }} />
-);
+const PostPanel = ({ id, record, resource }) => {
+  console.log(record);
+  // return <div dangerouslySetInnerHTML={{ __html: record.body }} />;
+  return <Example {...record} />;
+};

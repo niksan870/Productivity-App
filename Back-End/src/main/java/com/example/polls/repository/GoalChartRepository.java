@@ -15,4 +15,10 @@ public interface GoalChartRepository extends JpaRepository<GoalChart, UUID> {
 
     @Query("SELECT g FROM GoalChart g where id = :#{#id}")
     List<GoalChart> findAllById(UUID id);
+
+    @Query("SELECT g FROM GoalChart g where goal_id = :#{#id}")
+    List<GoalChart> findAllByGoalId(UUID id);
+
+    @Query("SELECT g FROM GoalChart g where created_by IN :ids")
+    List<GoalChart> getGoalsWithProfilesAndGraphs(List<Long> ids);
 }

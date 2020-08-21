@@ -44,24 +44,47 @@ CustomImageField.defaultProps = { label: "Picture" };
 
 export const CustomFieldLinker = ({ source, record, method }) => {
   const classes = useStyles();
-  return record.createdBy != undefined ? (
-    <Button
-      component={Link}
-      to={{ pathname: `/${method}/${record.createdBy.id}/show` }}
-    >
-      {record.createdBy == null || record.createdBy == "" ? (
-        <Avatar variant="square" className={classes.large}></Avatar>
-      ) : (
-        <Avatar
-          variant="square"
-          className={classes.large}
-          src={record.createdBy.picture}
-        />
-      )}
-      <Typography variant="h5" gutterBottom>
-        {record.createdBy.username}
-      </Typography>
-    </Button>
-  ) : null;
+  if (method == "user") {
+    method = "profiles";
+    return (
+      <Button
+        component={Link}
+        to={{ pathname: `/${method}/${record.user.id}/show` }}
+      >
+        {record.user.createdAt == null || record.user.createdAt == "" ? (
+          <Avatar variant="square" className={classes.large}></Avatar>
+        ) : (
+          <Avatar
+            variant="square"
+            className={classes.large}
+            src={record.user.picture}
+          />
+        )}
+        <Typography variant="h5" gutterBottom>
+          {record.user.username}
+        </Typography>
+      </Button>
+    );
+  } else {
+    return record.createdBy != undefined ? (
+      <Button
+        component={Link}
+        to={{ pathname: `/${method}/${record.createdBy.id}/show` }}
+      >
+        {record.createdBy == null || record.createdBy == "" ? (
+          <Avatar variant="square" className={classes.large}></Avatar>
+        ) : (
+          <Avatar
+            variant="square"
+            className={classes.large}
+            src={record.createdBy.picture}
+          />
+        )}
+        <Typography variant="h5" gutterBottom>
+          {record.createdBy.username}
+        </Typography>
+      </Button>
+    ) : null;
+  }
 };
 CustomFieldLinker.defaultProps = { label: "User Profile" };

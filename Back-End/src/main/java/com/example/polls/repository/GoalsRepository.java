@@ -1,6 +1,7 @@
 package com.example.polls.repository;
 
 import com.example.polls.model.Goal;
+import com.example.polls.model.GoalChart;
 import com.example.polls.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

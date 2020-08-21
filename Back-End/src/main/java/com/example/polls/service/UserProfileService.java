@@ -1,9 +1,13 @@
 package com.example.polls.service;
 
+import com.example.polls.dto.goal.GoalChartDTO;
+import com.example.polls.dto.goal.GoalChartListDTO;
 import com.example.polls.dto.user.UserProfileDTO;
 import com.example.polls.exception.BadRequestException;
 import com.example.polls.exception.ResourceNotFoundException;
+import com.example.polls.model.GoalChart;
 import com.example.polls.model.User;
+import com.example.polls.repository.GoalChartRepository;
 import com.example.polls.repository.GoalsRepository;
 import com.example.polls.repository.UserRepository;
 import com.example.polls.util.ObjectMapperUtils;
@@ -36,6 +40,9 @@ class UserProfileService {
     @Autowired
     private GoalsRepository goalsRepository;
 
+    @Autowired
+    private GoalChartRepository goalChartRepository;
+
     public Page<UserProfileDTO> getMany(Pageable pageable) {
         User currentUser = this.userPrincipal.getCurrentUserPrincipal();
         Page<User> userProfiles;
@@ -51,19 +58,15 @@ class UserProfileService {
         return new PageImpl<>(listOfPostDTO);
     }
 
-    public void getGoalsWithProfilesAndGraphs(int pageNo, int pageSize, UUID id) {
+    public Page<GoalChartDTO> getGoalsWithProfilesAndGraphs(int pageNo, int pageSize, UUID id) {
         validatePageNumberAndSize(pageNo, pageSize);
 
-        System.out.println("getGoalsWithProfilesAndGraphs");
-        List<User> users = goalsRepository.getParticipants(id);
-        List<Long> ids = users.stream()
-                .map(User::getId).collect(Collectors.toList());
+        List<GoalChart> goalCharts = goalChartRepository.findAllByGoalId(id);
+        List<GoalChartDTO> listOfPostDTO = ObjectMapperUtils.mapAll(goalCharts, GoalChartDTO.class);
 
-        System.out.println(ids.toString());
-//
-//        List<GoalChart> goalCharts = goalsRepository.getGoalsWithProfilesAndGraphs(ids);
 
-//        return new PageImpl<>(goalResponses);
+
+        return new PageImpl<>(listOfPostDTO);
     }
 
 
