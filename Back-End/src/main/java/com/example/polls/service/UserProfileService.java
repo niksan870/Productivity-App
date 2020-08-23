@@ -1,11 +1,8 @@
 package com.example.polls.service;
 
-import com.example.polls.dto.goal.GoalChartDTO;
-import com.example.polls.dto.goal.GoalChartListDTO;
 import com.example.polls.dto.user.UserProfileDTO;
 import com.example.polls.exception.BadRequestException;
 import com.example.polls.exception.ResourceNotFoundException;
-import com.example.polls.model.GoalChart;
 import com.example.polls.model.User;
 import com.example.polls.repository.GoalChartRepository;
 import com.example.polls.repository.GoalsRepository;
@@ -25,7 +22,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public
@@ -58,18 +54,6 @@ class UserProfileService {
         return new PageImpl<>(listOfPostDTO);
     }
 
-    public Page<GoalChartDTO> getGoalsWithProfilesAndGraphs(int pageNo, int pageSize, UUID id) {
-        validatePageNumberAndSize(pageNo, pageSize);
-
-        List<GoalChart> goalCharts = goalChartRepository.findAllByGoalId(id);
-        List<GoalChartDTO> listOfPostDTO = ObjectMapperUtils.mapAll(goalCharts, GoalChartDTO.class);
-
-
-
-        return new PageImpl<>(listOfPostDTO);
-    }
-
-
     public Page<UserProfileDTO> getParticipants(UUID id) {
         List<User> attendees = goalsRepository.getParticipants( id);
         List<UserProfileDTO> listOfPostDTO = ObjectMapperUtils.mapAll(attendees, UserProfileDTO.class);
@@ -81,20 +65,13 @@ class UserProfileService {
         return userRepository.save(newUser);
     }
 
-    public void update(Long id, UserProfileDTO userProfileBody) throws ResourceNotFoundException, IOException {
+    public void update(Long id, UserProfileDTO userProfileBody) {
         User userProfile = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User Profile not found for this id :: " + id));
 
-        userProfile.setId(userProfileBody.getId());
-        userProfile.setPicture(userProfileBody.getPicture());
-        userProfile.setName(userProfileBody.getName());
-        userProfile.setPhoneNumber(userProfileBody.getPhoneNumber());
-        userProfile.setCity(userProfileBody.getCity());
-        userProfile.setCountry(userProfileBody.getCountry());
-        userProfile.setGender(userProfileBody.getGender());
-        userProfile.setDateOfBirth(userProfileBody.getDateOfBirth());
+        User user = ObjectMapperUtils.map(userProfileBody, userProfile);
 
-       userRepository.save(userProfile);
+       userRepository.save(user);
     }
 
     public UserProfileDTO getOne(Long id) {

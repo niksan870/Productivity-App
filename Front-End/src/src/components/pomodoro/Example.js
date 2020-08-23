@@ -16,17 +16,13 @@ import {
 } from "recharts";
 
 const Example = (props) => {
-  let dataGraph = JSON.parse(props.jsonData).dataGraph;
   return (
     <LineChart
       width={500}
       height={300}
-      data={dataGraph}
+      data={props.dataGraph}
       margin={{
-        top: 5,
-        right: 30,
-        left: 20,
-        bottom: 5,
+        top: 5, right: 30, left: 20, bottom: 5,
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
@@ -34,12 +30,7 @@ const Example = (props) => {
       <YAxis />
       <Tooltip />
       <Legend />
-      <Line
-        type="monotone"
-        dataKey="expectedTime"
-        stroke="#8884d8"
-        activeDot={{ r: 8 }}
-      />
+      <Line type="monotone" dataKey="expectedTime" stroke="#8884d8" activeDot={{ r: 8 }} />
       <Line type="monotone" dataKey="timeDone" stroke="#82ca9d" />
     </LineChart>
   );

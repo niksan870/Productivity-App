@@ -64,13 +64,12 @@ const ProfileActions = ({ basePath, data, resource, props }) => {
 };
 
 export const ProfileEdit = (props) => {
-  console.log(props);
   return (
     <Edit {...props} undoable={false} actions={<ProfileActions />}>
       <SimpleForm>
-        {/* {props.permissions.includes("ADMIN") ? (
+        {props.permissions.includes("ADMIN") ? (
           <TextInput disabled label="Id" source="id" />
-        ) : null} */}
+        ) : null}
         <ImageInput format={formatPicture} source="picture" accept="image/*">
           <ImageField source="picture" />
         </ImageInput>

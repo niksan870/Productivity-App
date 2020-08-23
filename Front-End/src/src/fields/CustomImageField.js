@@ -51,6 +51,7 @@ export const CustomFieldLinker = ({ source, record, method }) => {
         component={Link}
         to={{ pathname: `/${method}/${record.user.id}/show` }}
       >
+        
         {record.user.createdAt == null || record.user.createdAt == "" ? (
           <Avatar variant="square" className={classes.large}></Avatar>
         ) : (
@@ -87,4 +88,5 @@ export const CustomFieldLinker = ({ source, record, method }) => {
     ) : null;
   }
 };
+
 CustomFieldLinker.defaultProps = { label: "User Profile" };

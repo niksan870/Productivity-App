@@ -1,10 +1,7 @@
 package com.example.polls.controller;
 
-import com.example.polls.dto.goal.GoalChartDTO;
-import com.example.polls.dto.goal.GoalChartListDTO;
 import com.example.polls.dto.user.UserProfileDTO;
 import com.example.polls.exception.ResourceNotFoundException;
-import com.example.polls.model.GoalChart;
 import com.example.polls.model.User;
 import com.example.polls.security.CurrentUser;
 import com.example.polls.security.UserPrincipal;
@@ -29,14 +26,6 @@ import java.util.UUID;
 public class UserProfileController {
     @Autowired
     private UserProfileService userProfileService;
-
-    @GetMapping("/getGoalsWithProfilesAndGraphs/{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<GoalChartDTO> getGoalsWithProfilesAndGraphs(@RequestParam int page, @RequestParam int pageSize, @PathVariable UUID id) {
-        return userProfileService.getGoalsWithProfilesAndGraphs(page, pageSize, id);
-    }
-
 
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")

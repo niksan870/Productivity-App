@@ -25,6 +25,7 @@
     "react-admin": "^3.5.1",
     "react-big-calendar": "^0.25.0",
     "react-bootstrap": "^1.0.1",
+    "react-copy-to-clipboard": "^5.0.2",
     "react-dom": "^16.13.1",
     "react-hook-form": "^5.7.2",
     "react-moment": "^0.9.7",

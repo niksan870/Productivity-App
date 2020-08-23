@@ -50,6 +50,7 @@ export const englishMessages = {
       back: "Back",
       expand: "Expand",
       close: "Close",
+      refresh: "Refresh"
     },
     navigation: {
       page_rows_per_page: "Rows per page",

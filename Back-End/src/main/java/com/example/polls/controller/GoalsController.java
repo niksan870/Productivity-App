@@ -2,6 +2,7 @@ package com.example.polls.controller;
 
 import com.example.polls.dto.DashboardLoaderDTO;
 import com.example.polls.dto.TimeRequest;
+import com.example.polls.dto.goal.GoalChartDTO;
 import com.example.polls.dto.goal.GoalRequest;
 import com.example.polls.dto.goal.GoalResponse;
 import com.example.polls.security.CurrentUser;
@@ -22,6 +23,14 @@ import java.util.UUID;
 public class GoalsController {
     @Autowired
     private GoalsService goalsService;
+
+
+    @GetMapping("/getGoalsWithProfilesAndGraphs/{id}")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<GoalChartDTO> getGoalsWithProfilesAndGraphs(@RequestParam int page, @RequestParam int pageSize, @PathVariable UUID id) {
+        return goalsService.getGoalsWithProfilesAndGraphs(page, pageSize, id);
+    }
 
     @GetMapping("getGoalsFromProfile/{id}")
     @PreAuthorize("isAuthenticated()")

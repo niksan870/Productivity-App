@@ -2,6 +2,7 @@ package com.example.polls.service;
 
 import com.example.polls.dto.DashboardLoaderDTO;
 import com.example.polls.dto.TimeRequest;
+import com.example.polls.dto.goal.GoalChartDTO;
 import com.example.polls.dto.goal.GoalRequest;
 import com.example.polls.dto.goal.GoalResponse;
 import com.example.polls.dto.user.UserProfileDTO;
@@ -59,10 +60,9 @@ public class GoalsService {
 
     public DashboardLoaderDTO getCurrentUserGoalList(long userId) {
         User user = userProfileRepository.getOne(userId);
-        List<Goal> goals = goalsRepository.findAllWhereUserID(userPrincipal.getCurrentUserPrincipal().getId());
+        Set<Goal> goals = user.getsub_goals();
         List<Pomodoro> pomodoros = pomodoroRepository.findAllWhereUserID(userPrincipal.getCurrentUserPrincipal().getId());
         List<PomodoroMusic> pomodoroMusics = pomodoroMusicRepository.findAllWhereUserID(userPrincipal.getCurrentUserPrincipal().getId());
-
 
         UserProfileDTO userProfileDTO = ObjectMapperUtils.map(user, UserProfileDTO.class);
         List<GoalResponse> goalResponses = ObjectMapperUtils.mapAll(goals, GoalResponse.class);
@@ -120,9 +120,21 @@ public class GoalsService {
 
         Set<User> updateList = goal.getAttendees();
 
+        // Check if User is already in the list
         if (!updateList.contains(userProfile)) {
             updateList.add(userProfile);
             goal.setAttendees(updateList);
+
+            String[] arrTime = goal.getDailyTimePerDay().split(":", -1);
+            float hours = Float.parseFloat(arrTime[0]);
+            float minutes = Float.parseFloat(arrTime[1]);
+
+            float expectedTime = (((hours * 3600) + (minutes * 60)) / 3600);
+
+            JSONObject json = setupJsonData(goal.getDeadlineSetter(), hours, minutes);
+            GoalChart goalChart = new GoalChart(userPrincipal.getCurrentUserPrincipal(), json, 0, 0, expectedTime, goal);
+
+            goalChartRepository.save(goalChart);
         }
 
         goalsRepository.save(goal);
@@ -136,25 +148,6 @@ public class GoalsService {
     }
 
     public GoalResponse create(GoalRequest goalRequest) throws NullPointerException {
-        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-        DateTime start = DateTime.parse(currentDate);
-        DateTime end = DateTime.parse(goalRequest.getDeadlineSetter());
-        List<DateTime> between = TimeHandler.getDateRange(start, end);
-
-        float expectedTime = (((Float.parseFloat(goalRequest.getHours()) * 3600) + (Float.parseFloat(goalRequest.getMinutes()) * 60)) / 3600);
-
-        JSONObject json = new JSONObject();
-        JSONArray array = new JSONArray();
-        for (DateTime d : between) {
-            JSONObject item = new JSONObject();
-            item.put("name", d.toString("yyyy-MM-dd"));
-            item.put("expectedTime", expectedTime);
-            item.put("timeDone", 0);
-            array.put(item);
-        }
-
-        json.put("dataGraph", array);
-
         Set<User> list = new HashSet<>();
         list.add(userPrincipal.getCurrentUserPrincipal());
 
@@ -167,6 +160,9 @@ public class GoalsService {
         goal.setDescription(goalRequest.getDescription());
 
         Goal updatedGoal = goalsRepository.save(goal);
+
+        float expectedTime = (((Float.parseFloat(goalRequest.getHours()) * 3600) + (Float.parseFloat(goalRequest.getMinutes()) * 60)) / 3600);
+        JSONObject json = setupJsonData(goalRequest.getDeadlineSetter(), Float.parseFloat(goalRequest.getHours()), Float.parseFloat(goalRequest.getMinutes()));
         GoalChart goalChart = new GoalChart(userPrincipal.getCurrentUserPrincipal(), json, 0, 0, expectedTime, goal);
 
         goalChartRepository.save(goalChart);
@@ -185,6 +181,15 @@ public class GoalsService {
         Goal updatedGoal = goalsRepository.save(goal);
 
         return ObjectMapperUtils.map(updatedGoal, GoalResponse.class);
+    }
+
+    public Page<GoalChartDTO> getGoalsWithProfilesAndGraphs(int pageNo, int pageSize, UUID id) {
+        validatePageNumberAndSize(pageNo, pageSize);
+
+        List<GoalChart> goalCharts = goalChartRepository.findAllByGoalId(id);
+        List<GoalChartDTO> listOfPostDTO = ObjectMapperUtils.mapAll(goalCharts, GoalChartDTO.class);
+
+        return new PageImpl<>(listOfPostDTO);
     }
 
     public HttpEntity delete(UUID id) {
@@ -211,5 +216,26 @@ public class GoalsService {
                 .collect(Collectors.toMap(User::getId, Function.identity()));
 
         return creatorMap;
+    }
+
+    private JSONObject setupJsonData(String deadlineSetter, float hours, float minutes){
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+        DateTime start = DateTime.parse(currentDate);
+        DateTime end = DateTime.parse(deadlineSetter);
+        List<DateTime> between = TimeHandler.getDateRange(start, end);
+
+        float expectedTime = (((hours * 3600) + (minutes * 60)) / 3600);
+        JSONObject json = new JSONObject();
+        JSONArray array = new JSONArray();
+        for (DateTime d : between) {
+            JSONObject item = new JSONObject();
+            item.put("name", d.toString("yyyy-MM-dd"));
+            item.put("expectedTime", expectedTime);
+            item.put("timeDone", 0);
+            array.put(item);
+        }
+
+        json.put("dataGraph", array);
+        return json;
     }
 }

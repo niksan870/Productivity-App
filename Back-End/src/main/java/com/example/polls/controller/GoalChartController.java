@@ -3,6 +3,7 @@ package com.example.polls.controller;
 import com.example.polls.dto.TimeRequest;
 import com.example.polls.dto.goal.GoalChartDTO;
 import com.example.polls.dto.goal.GoalResponse;
+import com.example.polls.dto.goal.SimpleGoalChartDTO;
 import com.example.polls.model.GoalChart;
 import com.example.polls.service.GoalChartService;
 import org.springframework.beans.factory.annotation.Autowired;

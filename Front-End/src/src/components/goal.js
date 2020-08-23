@@ -32,6 +32,7 @@ import { makeStyles, Chip } from "@material-ui/core";
 import FormDialog from "../lists/FormDialog";
 import { CustomFieldLinker } from "../fields/CustomImageField";
 import Example from "../components/pomodoro/Example";
+import {CopyToClickBoard} from "../fields/CopyToClickBoard";
 
 const required = (message = "Required") => (value) =>
   value ? undefined : message;
@@ -154,30 +155,17 @@ export const GoalShow = (props) => {
       <TabbedShowLayout>
         <Tab label="details">
           <TextField label="Key" source="id" />
+          <CopyToClickBoard />
           <TextField source="title" />
           <TextField label="Goal Status" source="private" />
           <TextField label="Description" source="description" />
           <TextField label="How Much Time Per Day" source="dailyTimePerDay" />
           <TextField label="Deadline Date" source="deadlineSetter" />
-          <FormDialog />
-        </Tab>
-        <Tab label="Participants">
-          <ReferenceManyField
-            label="Participants"
-            reference="profiles"
-            target="id"
-            filter={{ method: "getParticipants" }}
-          >
-            <Datagrid>
-              <CustomFieldLinker method="profiles" />
-              <ShowButton />
-            </Datagrid>
-          </ReferenceManyField>
-        </Tab>
+          </Tab>
         <Tab label="Participants' Graphs">
           <ReferenceManyField
             label="Participants"
-            reference="profiles"
+            reference="goals"
             target="id"
             filter={{ method: "getGoalsWithProfilesAndGraphs" }}
           >
@@ -193,8 +181,4 @@ export const GoalShow = (props) => {
   );
 };
 
-const PostPanel = ({ id, record, resource }) => {
-  console.log(record);
-  // return <div dangerouslySetInnerHTML={{ __html: record.body }} />;
-  return <Example {...record} />;
-};
+const PostPanel = ({ id, record, resource }) => <Example {...JSON.parse(record.jsonData)} />;

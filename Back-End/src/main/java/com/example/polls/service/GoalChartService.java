@@ -3,6 +3,7 @@ package com.example.polls.service;
 import com.example.polls.dto.TimeRequest;
 import com.example.polls.dto.goal.GoalChartDTO;
 import com.example.polls.dto.goal.GoalResponse;
+import com.example.polls.dto.goal.SimpleGoalChartDTO;
 import com.example.polls.exception.BadRequestException;
 import com.example.polls.exception.ResourceNotFoundException;
 import com.example.polls.model.Goal;
@@ -26,8 +27,11 @@ public class GoalChartService {
     @Autowired
     private GoalChartRepository goalChartRepository;
 
+    @Autowired
+    private UserPrincipal userPrincipal;
+
     public GoalChartDTO logTime(UUID id, TimeRequest time) {
-        GoalChart updateGoal = goalChartRepository.findByGoalChartByGoalId(id);
+        GoalChart updateGoal = goalChartRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Chart", "id", id));
 
         float addToTimeDone = updateGoal.getTimeDone();
         float timeToAdd = time.getTime();
@@ -76,13 +80,14 @@ public class GoalChartService {
     }
 
     public GoalChartDTO getOne(UUID id) {
-        GoalChart goalChart = goalChartRepository.findById(id)
+        GoalChart goalChart = goalChartRepository.findByGoalIdAndUserId(id, userPrincipal.getCurrentUserPrincipal().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Chart", "id", id));
+
         return ObjectMapperUtils.map(goalChart, GoalChartDTO.class);
     }
 
     private void validatePageNumberAndSize(int page, int size) {
-        if(page < 0) {
+        if (page < 0) {
             throw new BadRequestException("Page number cannot be less than zero.");
         }
     }

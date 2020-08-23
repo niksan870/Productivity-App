@@ -102,8 +102,8 @@ export const GoalsList = (props) => {
         <TextField source="description" />
         <CustomFieldLinker method="profiles" />
         <TextField source="dailyTimePerDay" />
-        <TextField source="timeDone" />
-        <TextField source="timeDoneForTheDay" />
+        {/* <TextField source="timeDone" />
+        <TextField source="timeDoneForTheDay" /> */}
         <ShowButton />
       </Datagrid>
     </List>

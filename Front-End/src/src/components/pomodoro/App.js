@@ -35,6 +35,7 @@ class App extends Component {
       goalId: null,
       showGraph: false,
       goalData: {},
+      goalChartId: null,
       timerInterval: null,
       dailyTimeToBeReached: null,
       counter: -1,
@@ -115,7 +116,7 @@ class App extends Component {
     console.log(actualTimeDoneSoFar);
     axios({
       method: "put",
-      url: BASE_API_URL + "/goalsChart/logTime/" + goalId,
+      url: BASE_API_URL + "/goalsChart/logTime/" + this.state.goalChartId,
       data: { time: actualTimeDoneSoFar / 60 },
       headers: {
         Authorization: "Bearer " + this.state.token,
@@ -221,7 +222,9 @@ class App extends Component {
         let time = hours + minutes;
 
         this.setState({
+          ...this.state,
           goalData: JSON.parse(response.data.jsonData),
+          goalChartId: response.data.id,
           selectedGoal: e.target.value,
           dailyTimeToBeReached: time,
           breakLength: Number.parseInt(this.props.defaultBreakLength, 10),
@@ -300,11 +303,11 @@ class App extends Component {
                 className="form-control"
                 id="select-a-goal"
               >
-                {this.props.goals.map((option, index) => (
+                {this.props.goals != undefined ? this.props.goals.map((option, index) => (
                   <MenuItem key={index} value={option}>
                     {option.title}
                   </MenuItem>
-                ))}
+                )) : undefined}
               </Select>
             </FormControl>
             {this.state.showGraph ? <Example {...this.state.goalData} /> : null}
