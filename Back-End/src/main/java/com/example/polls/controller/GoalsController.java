@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
 @RestController
@@ -56,7 +57,7 @@ public class GoalsController {
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public GoalResponse getOne(@PathVariable UUID id) {
+    public GoalResponse getOne(@PathVariable UUID id) throws UnsupportedEncodingException {
         return goalsService.getOne(id);
     }
 

@@ -30,7 +30,7 @@ function swtichResourceMethods(type, resource, params, apiUrl) {
   let url = "";
   const options = {};
 
-  console.log(type)
+  console.log(type);
   switch (type) {
     case GET_LIST: {
       let { page, perPage } = params.pagination;
@@ -45,10 +45,10 @@ function swtichResourceMethods(type, resource, params, apiUrl) {
       break;
     case GET_MANY: {
       const query = {
-        filter: JSON.stringify({ id: params.ids })
+        filter: JSON.stringify({ id: params.ids }),
       };
       let idStr = "";
-      const queryString = params.ids.map(id => idStr + `id=${id}`);
+      const queryString = params.ids.map((id) => idStr + `id=${id}`);
       url = `${apiUrl}/${resource}/${queryString}`;
       break;
     }

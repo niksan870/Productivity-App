@@ -8,20 +8,19 @@ const convertFileToBase64 = (file) =>
   });
 
 const addUploadFeature = (requestHandler) => (type, resource, params) => {
-  if (type === "UPDATE" && resource === "profiles") { console.log(params.data)
+  if (type === "UPDATE" && resource === "profiles") {
+    console.log(params.data);
     const newPicture = params.data.picture;
-    if (typeof newPicture == 'string') { 
-      return Promise.all([newPicture]).then(
-        (transformedNewPicture) => {
-          return requestHandler(type, resource, {
-            ...params,
-            data: {
-              ...params.data,
-              picture: transformedNewPicture[0],
-            },
-          });
-        }
-      );
+    if (typeof newPicture == "string") {
+      return Promise.all([newPicture]).then((transformedNewPicture) => {
+        return requestHandler(type, resource, {
+          ...params,
+          data: {
+            ...params.data,
+            picture: transformedNewPicture[0],
+          },
+        });
+      });
     } else {
       return Promise.all([convertFileToBase64(newPicture)]).then(
         (transformedNewPicture) => {

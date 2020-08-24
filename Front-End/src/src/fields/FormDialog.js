@@ -9,9 +9,11 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
 import FormControl from "@material-ui/core/FormControl";
 import { BASE_API_URL } from "../../constants";
+import { useDataProvider, useNotify, useRedirect } from "react-admin";
 import axios from "axios";
 
 export default function FormDialog() {
+  const redirect = useRedirect();
   const [open, setOpen] = React.useState(false);
   const [id, setId] = React.useState(null);
   const [token, setToken] = React.useState(localStorage.getItem("accessToken"));
@@ -21,7 +23,7 @@ export default function FormDialog() {
   };
 
   const handleClose = (e) => {
-    console.log(e.target);
+    // console.log(e.target);
     setOpen(false);
   };
 
@@ -34,8 +36,9 @@ export default function FormDialog() {
       },
     })
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         setOpen(false);
+        redirect("/goals");
       })
       .catch((error) => {
         // this.props.showNotification("Error: something went wrong", "warning");

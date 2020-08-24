@@ -29,10 +29,10 @@ import {
   DeleteButton,
 } from "react-admin";
 import { makeStyles, Chip } from "@material-ui/core";
-import FormDialog from "../lists/FormDialog";
+import FormDialog from "../fields/FormDialog";
 import { CustomFieldLinker } from "../fields/CustomImageField";
 import Example from "../components/pomodoro/Example";
-import {CopyToClickBoard} from "../fields/CopyToClickBoard";
+import { CopyToClickBoard } from "../fields/CopyToClickBoard";
 
 const required = (message = "Required") => (value) =>
   value ? undefined : message;
@@ -136,11 +136,21 @@ export const GoalEdit = (props) => {
   );
 };
 
-const GoalActions = ({ basePath, data }) => {
+const GoalActions = ({ basePath, data, resource, props }) => {
+  let { editable } = data;
+  let permissions = localStorage.getItem("permissions");
   return (
     <TopToolbar>
-      <EditButton basePath={basePath} record={data} />
-      <DeleteButton basePath={basePath} record={data} />
+      {editable ? (
+        <EditButton basePath={basePath} record={data} />
+      ) : permissions.includes("ADMIN") ? (
+        <EditButton basePath={basePath} record={data} />
+      ) : null}
+      {editable ? (
+        <DeleteButton basePath={basePath} record={data} />
+      ) : permissions.includes("ADMIN") ? (
+        <DeleteButton basePath={basePath} record={data} />
+      ) : null}
     </TopToolbar>
   );
 };
@@ -161,8 +171,22 @@ export const GoalShow = (props) => {
           <TextField label="Description" source="description" />
           <TextField label="How Much Time Per Day" source="dailyTimePerDay" />
           <TextField label="Deadline Date" source="deadlineSetter" />
-          </Tab>
+        </Tab>
         <Tab label="Participants' Graphs">
+          <ReferenceManyField
+            label="Participants"
+            reference="goals"
+            target="id"
+            filter={{ method: "getGoalsWithProfilesAndGraphs" }}
+          >
+            <Datagrid expand={<PostPanel />}>
+              <CustomFieldLinker method="user" />
+              <TextField source="goal.dailyTimePerDay" />
+              <TextField source="goal.deadlineSetter" />
+            </Datagrid>
+          </ReferenceManyField>
+        </Tab>
+        <Tab label="Pomodoro">
           <ReferenceManyField
             label="Participants"
             reference="goals"
@@ -181,4 +205,6 @@ export const GoalShow = (props) => {
   );
 };
 
-const PostPanel = ({ id, record, resource }) => <Example {...JSON.parse(record.jsonData)} />;
+const PostPanel = ({ id, record, resource }) => (
+  <Example {...JSON.parse(record.jsonData)} />
+);

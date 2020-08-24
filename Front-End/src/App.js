@@ -17,7 +17,7 @@ import LoginPage from "./src/components/register/App";
 
 import MyLayout from "./src/layout/MyLayout";
 
-import { fetchUtils, Admin, Resource } from "react-admin";
+import { fetchUtils, Admin, Resource, EditGuesser } from "react-admin";
 import provider from "./src/providers/dataProvider";
 import { ProfileEdit, ProfileShow } from "./src/components/profile";
 import { UserEdit, UserShow } from "./src/components/user";

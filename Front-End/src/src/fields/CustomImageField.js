@@ -44,6 +44,7 @@ CustomImageField.defaultProps = { label: "Picture" };
 
 export const CustomFieldLinker = ({ source, record, method }) => {
   const classes = useStyles();
+  // console.log(record);
   if (method == "user") {
     method = "profiles";
     return (
@@ -51,7 +52,6 @@ export const CustomFieldLinker = ({ source, record, method }) => {
         component={Link}
         to={{ pathname: `/${method}/${record.user.id}/show` }}
       >
-        
         {record.user.createdAt == null || record.user.createdAt == "" ? (
           <Avatar variant="square" className={classes.large}></Avatar>
         ) : (

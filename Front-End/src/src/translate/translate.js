@@ -8,6 +8,7 @@ export const englishMessages = {
       created: "Created",
       updated: "Updated",
       deleted: "Deleted",
+      canceled: "Canceled",
     },
     MenuOptions: {
       settings: "Settings",
@@ -50,7 +51,7 @@ export const englishMessages = {
       back: "Back",
       expand: "Expand",
       close: "Close",
-      refresh: "Refresh"
+      refresh: "Refresh",
     },
     navigation: {
       page_rows_per_page: "Rows per page",

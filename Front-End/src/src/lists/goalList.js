@@ -8,7 +8,7 @@ import {
   Datagrid,
 } from "react-admin";
 import { cloneElement } from "react";
-import FormDialog from "./FormDialog";
+import FormDialog from "../fields/FormDialog";
 import { makeStyles, Chip } from "@material-ui/core";
 import { useTranslate } from "react-admin";
 import { CustomFieldLinker } from "../fields/CustomImageField";

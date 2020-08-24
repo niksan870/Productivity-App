@@ -19,7 +19,7 @@ import {
   DeleteButton,
   ReferenceField,
 } from "react-admin";
-import FormDialog from "../lists/FormDialog";
+import FormDialog from "../fields/FormDialog";
 
 import Avatar from "@material-ui/core/Avatar";
 import { makeStyles } from "@material-ui/core/styles";
@@ -65,8 +65,8 @@ const ProfileActions = ({ basePath, data, resource, props }) => {
 
 export const ProfileEdit = (props) => {
   return (
-    <Edit {...props} undoable={false} actions={<ProfileActions />}>
-      <SimpleForm>
+    <Edit {...props} actions={<ProfileActions />}>
+      <SimpleForm redirect="show" submitOnEnter={true}>
         {props.permissions.includes("ADMIN") ? (
           <TextInput disabled label="Id" source="id" />
         ) : null}
@@ -74,6 +74,7 @@ export const ProfileEdit = (props) => {
           <ImageField source="picture" />
         </ImageInput>
         <TextInput source="name" />
+        {/* <TextInput source="id" /> */}
         <TextInput source="phoneNumber" />
         <SelectInput
           source="gender"

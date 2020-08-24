@@ -70,4 +70,21 @@ public class ModelMapper {
         return goalResponse;
     }
 
+
+    public static GoalResponse mapGoalToGoalResponse(Goal goal){
+        GoalResponse goalResponse = new GoalResponse();
+
+        String[] hoursAndMinutes = goal.getDailyTimePerDay().split(":");
+        goalResponse.setDeadlineSetter(goal.getDeadlineSetter());
+        goalResponse.setDescription(goal.getDescription());
+        goalResponse.setTitle(goal.getTitle());
+        goalResponse.setHours(hoursAndMinutes[0]);
+        goalResponse.setMinutes(hoursAndMinutes[1]);
+        goalResponse.setStringifiedJsonData("");
+        goalResponse.setId(goal.getId());
+
+
+        return goalResponse;
+    }
+
 }

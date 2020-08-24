@@ -149,7 +149,7 @@ class App extends Component {
             this.decreaseTimer();
             this.phaseControl();
             if (
-              this.state.timeLabel == "Session" &&
+              this.state.timeLabel === "Session" &&
               this.state.timeLeftInSecond / 60 ===
                 this.state.sessionLengthTracker
             ) {
@@ -173,7 +173,7 @@ class App extends Component {
   }
 
   decreaseTimer() {
-    if (this.state.minuteCounter - 1 == this.state.timeLeftInSecond / 60) {
+    if (this.state.minuteCounter - 1 === this.state.timeLeftInSecond / 60) {
       this.setState({
         timeLeftInSecond: this.state.timeLeftInSecond - 1,
         counter: this.state.counter + 1,
@@ -303,11 +303,13 @@ class App extends Component {
                 className="form-control"
                 id="select-a-goal"
               >
-                {this.props.goals != undefined ? this.props.goals.map((option, index) => (
-                  <MenuItem key={index} value={option}>
-                    {option.title}
-                  </MenuItem>
-                )) : undefined}
+                {this.props.goals != undefined
+                  ? this.props.goals.map((option, index) => (
+                      <MenuItem key={index} value={option}>
+                        {option.title}
+                      </MenuItem>
+                    ))
+                  : undefined}
               </Select>
             </FormControl>
             {this.state.showGraph ? <Example {...this.state.goalData} /> : null}

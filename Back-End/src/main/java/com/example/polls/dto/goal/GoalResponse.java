@@ -16,6 +16,7 @@ public class GoalResponse {
     private boolean isPrivate;
     private long userProfile;
     private UserSummary createdBy;
+    private boolean editable;
 
     public long getUserProfile() {
         return userProfile;
@@ -97,5 +98,13 @@ public class GoalResponse {
 
     public void setStringifiedJsonData(String stringifiedJsonData) {
         this.stringifiedJsonData = stringifiedJsonData;
+    }
+
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
 }

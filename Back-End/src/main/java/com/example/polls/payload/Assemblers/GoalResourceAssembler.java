@@ -6,6 +6,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
+import java.io.UnsupportedEncodingException;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -14,10 +16,14 @@ public class GoalResourceAssembler implements RepresentationModelAssembler<Goal,
 
     @Override
     public EntityModel<Goal> toModel(Goal goal) {
-
-        return new EntityModel<>(goal,
-                linkTo(methodOn(GoalsController.class).getOne(goal.getId())).withSelfRel(),
-                linkTo(methodOn(GoalsController.class).delete(goal.getId())).withRel("delete_goal"));
+        try {
+            return new EntityModel<>(goal,
+                    linkTo(methodOn(GoalsController.class).getOne(goal.getId())).withSelfRel(),
+                    linkTo(methodOn(GoalsController.class).delete(goal.getId())).withRel("delete_goal"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
 

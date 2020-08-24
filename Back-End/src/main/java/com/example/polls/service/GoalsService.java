@@ -140,11 +140,19 @@ public class GoalsService {
         goalsRepository.save(goal);
     }
 
-    public GoalResponse getOne(UUID id) {
+    public GoalResponse getOne(UUID id) throws UnsupportedEncodingException {
         Goal goal = goalsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Goal", "id", id));
 
-        return ObjectMapperUtils.map(goal, GoalResponse.class);
+        GoalResponse goalResponse = ModelMapper.mapGoalToGoalResponse(goal);
+
+        if (goal.getCreatedBy() == userPrincipal.getCurrentUserPrincipal().getId()) {
+            goalResponse.setEditable(true);
+        } else {
+            goalResponse.setEditable(false);
+        }
+
+        return goalResponse;
     }
 
     public GoalResponse create(GoalRequest goalRequest) throws NullPointerException {
