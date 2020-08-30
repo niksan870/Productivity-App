@@ -44,7 +44,6 @@ CustomImageField.defaultProps = { label: "Picture" };
 
 export const CustomFieldLinker = ({ source, record, method }) => {
   const classes = useStyles();
-  // console.log(record);
   if (method == "user") {
     method = "profiles";
     return (
@@ -62,10 +61,30 @@ export const CustomFieldLinker = ({ source, record, method }) => {
           />
         )}
         <Typography variant="h5" gutterBottom>
-          {record.user.username}
+          {record.user.name}
         </Typography>
       </Button>
     );
+  } else if(method == "profiles") {
+      return (
+        <Button
+          component={Link}
+          to={{ pathname: `/${method}/${record.id}/show` }}
+        >
+          {record.createdAt == null || record.createdAt == "" ? (
+            <Avatar variant="square" className={classes.large}></Avatar>
+          ) : (
+            <Avatar
+              variant="square"
+              className={classes.large}
+              src={record.picture}
+            />
+          )}
+          <Typography variant="h5" gutterBottom>
+            {record.name}
+          </Typography>
+        </Button>
+      );
   } else {
     return record.createdBy != undefined ? (
       <Button
@@ -82,7 +101,7 @@ export const CustomFieldLinker = ({ source, record, method }) => {
           />
         )}
         <Typography variant="h5" gutterBottom>
-          {record.createdBy.username}
+          {record.createdBy.name}
         </Typography>
       </Button>
     ) : null;

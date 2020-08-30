@@ -37,7 +37,6 @@ export const englishMessages = {
       unselect: "Unselect",
       save: "Save",
       sort: "Sort",
-      delete: "Delete",
       all: "All",
       yours: "Yours",
       search_goals: "Search Goals",
@@ -52,6 +51,7 @@ export const englishMessages = {
       expand: "Expand",
       close: "Close",
       refresh: "Refresh",
+      remove: "Remove"
     },
     navigation: {
       page_rows_per_page: "Rows per page",

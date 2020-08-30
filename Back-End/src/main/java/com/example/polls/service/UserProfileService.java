@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -42,11 +43,7 @@ class UserProfileService {
     public Page<UserProfileDTO> getMany(Pageable pageable) {
         User currentUser = this.userPrincipal.getCurrentUserPrincipal();
         Page<User> userProfiles;
-        if (currentUser.getRoles().toString().indexOf("ADMIN") != -1) {
-            userProfiles = userRepository.findAll(pageable);
-        } else {
-            userProfiles = userRepository.findAll(pageable);
-        }
+        userProfiles = userRepository.findAll(pageable);
 
         List<User> profiles = userProfiles.getContent();
         List<UserProfileDTO> listOfPostDTO = ObjectMapperUtils.mapAll(profiles, UserProfileDTO.class);
@@ -55,9 +52,12 @@ class UserProfileService {
     }
 
     public Page<UserProfileDTO> getParticipants(UUID id) {
-        List<User> attendees = goalsRepository.getParticipants( id);
+        User currentUser = this.userPrincipal.getCurrentUserPrincipal();
+
+        Set<User> attendees = userRepository.getParticipants(id, currentUser.getId());
         List<UserProfileDTO> listOfPostDTO = ObjectMapperUtils.mapAll(attendees, UserProfileDTO.class);
         final Page<UserProfileDTO> page = new PageImpl<>(listOfPostDTO);
+
         return page;
     }
 

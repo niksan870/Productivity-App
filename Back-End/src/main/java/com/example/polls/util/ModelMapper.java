@@ -64,7 +64,7 @@ public class ModelMapper {
         goalResponse.setStringifiedJsonData("");
         goalResponse.setId(goal.getId());
 
-        UserSummary creatorSummary = new UserSummary(creator.getId(), creator.getUsername(), creator.getUsername(), creator.getPicture());
+        UserSummary creatorSummary = new UserSummary(creator.getId(), creator.getUsername(), creator.getName(), creator.getPicture());
         goalResponse.setCreatedBy(creatorSummary);
 
         return goalResponse;

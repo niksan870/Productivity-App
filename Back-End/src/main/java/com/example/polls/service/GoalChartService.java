@@ -54,7 +54,7 @@ public class GoalChartService {
                 }
                 if (elementName.equals("timeDone")) {
                     float value = objectInArray.getFloat(elementName);
-                    if (foundDate == true) {
+                    if (foundDate) {
                         objectInArray.put(elementName, value + timeToAdd);
                         foundDate = false;
                     }

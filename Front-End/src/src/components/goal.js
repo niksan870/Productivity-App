@@ -33,6 +33,7 @@ import FormDialog from "../fields/FormDialog";
 import { CustomFieldLinker } from "../fields/CustomImageField";
 import Example from "../components/pomodoro/Example";
 import { CopyToClickBoard } from "../fields/CopyToClickBoard";
+import { useTranslate } from "react-admin";
 
 const required = (message = "Required") => (value) =>
   value ? undefined : message;
@@ -181,8 +182,21 @@ export const GoalShow = (props) => {
           >
             <Datagrid expand={<PostPanel />}>
               <CustomFieldLinker method="user" />
-              <TextField source="goal.dailyTimePerDay" />
-              <TextField source="goal.deadlineSetter" />
+              <TextField label="Time done today" source="goal.dailyTimePerDay" />
+              <TextField label="Expected time to be done today" source="goal.dailyTimePerDay" />
+            </Datagrid>
+          </ReferenceManyField>
+        </Tab>
+        <Tab label="Manage Participants">
+          <ReferenceManyField
+            label="Participants"
+            reference="profiles"
+            target="id"
+            filter={{ method: "getParticipants" }}
+          >
+            <Datagrid >
+              <CustomFieldLinker method="profiles" />
+              <DeleteButton undoable={false} label="ra.action.remove"/>
             </Datagrid>
           </ReferenceManyField>
         </Tab>
