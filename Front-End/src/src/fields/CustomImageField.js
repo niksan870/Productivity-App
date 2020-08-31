@@ -1,4 +1,3 @@
-// import Avatar from "react-avatar";
 import React from "react";
 import Avatar from "@material-ui/core/Avatar";
 import { makeStyles } from "@material-ui/core/styles";
@@ -44,12 +43,12 @@ CustomImageField.defaultProps = { label: "Picture" };
 
 export const CustomFieldLinker = ({ source, record, method }) => {
   const classes = useStyles();
+  // console.log(record)
   if (method == "user") {
-    method = "profiles";
     return (
       <Button
         component={Link}
-        to={{ pathname: `/${method}/${record.user.id}/show` }}
+        to={{ pathname: `/profiles/${record.user.id}/show` }}
       >
         {record.user.createdAt == null || record.user.createdAt == "" ? (
           <Avatar variant="square" className={classes.large}></Avatar>
@@ -66,42 +65,43 @@ export const CustomFieldLinker = ({ source, record, method }) => {
       </Button>
     );
   } else if(method == "profiles") {
+    // console.log(record)
       return (
         <Button
           component={Link}
-          to={{ pathname: `/${method}/${record.id}/show` }}
+          to={{ pathname: `/profiles/${record.createdBy.id}/show` }}
         >
-          {record.createdAt == null || record.createdAt == "" ? (
+          {record.createdBy.picture == null || record.createdBy.picture == "" ? (
             <Avatar variant="square" className={classes.large}></Avatar>
           ) : (
             <Avatar
               variant="square"
               className={classes.large}
-              src={record.picture}
+              src={record.createdBy.picture}
             />
           )}
           <Typography variant="h5" gutterBottom>
-            {record.name}
+            {record.createdBy.name}
           </Typography>
         </Button>
       );
-  } else {
-    return record.createdBy != undefined ? (
+  } else if("participant") {
+    return record != undefined ? (
       <Button
         component={Link}
-        to={{ pathname: `/${method}/${record.createdBy.id}/show` }}
+        to={{ pathname: `/profiles/${record.id}/show` }}
       >
-        {record.createdBy == null || record.createdBy == "" ? (
+        {record.picture == null || record.picture == "" ? (
           <Avatar variant="square" className={classes.large}></Avatar>
         ) : (
           <Avatar
             variant="square"
             className={classes.large}
-            src={record.createdBy.picture}
+            src={record.picture}
           />
         )}
         <Typography variant="h5" gutterBottom>
-          {record.createdBy.name}
+          {record.name}
         </Typography>
       </Button>
     ) : null;

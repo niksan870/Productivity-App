@@ -14,6 +14,7 @@ import authProvider from "./src/providers/authProvider";
 import { BASE_API_URL } from "./constants";
 import customRoutes from "./src/customRoutes";
 import LoginPage from "./src/components/register/App";
+import { Route } from 'react-router-dom';
 
 import MyLayout from "./src/layout/MyLayout";
 
@@ -34,9 +35,9 @@ import {
 } from "./src/components/pomodoro";
 import { MusicEdit, MusicShow, MusicCreate } from "./src/components/music";
 import Menu from "./src/menu/menu";
-import bitcoinRateReducer from "./src/reducers/bitcoinRateReducer";
 import polyglotI18nProvider from "ra-i18n-polyglot";
 import { englishMessages } from "./src/translate/translate";
+import profile from './src/profile/index';
 
 const httpClient = (url, options = {}) => {
   if (!options.headers) {
@@ -65,17 +66,25 @@ const App = () => {
       <Admin
         locale="en"
         menu={Menu}
-        customRoutes={customRoutes}
         loginPage={LoginPage}
         history={history}
-        appLayout={MyLayout}
         authProvider={authProvider}
         dataProvider={uploadCapableDataProvider}
         dashboard={Dashboard}
         i18nProvider={i18nProvider}
+        dataProvider={dataProvider}
+        customRoutes={[
+            <Route
+                key="my-profile"
+                path="/my-profile"
+                component={profile.edit}
+            />
+        ]}
+       appLayout={MyLayout}
       >
         {(permissions) => {
           return [
+            <Resource name="profile" />,
             <Resource
               name="profiles"
               list={ProfilesList}

@@ -157,6 +157,7 @@ const GoalActions = ({ basePath, data, resource, props }) => {
 };
 
 export const GoalShow = (props) => {
+  console.log(props)
   return (
     <Show
       {...props}
@@ -195,7 +196,7 @@ export const GoalShow = (props) => {
             filter={{ method: "getParticipants" }}
           >
             <Datagrid >
-              <CustomFieldLinker method="profiles" />
+              <CustomFieldLinker method="participants" />
               <DeleteButton undoable={false} label="ra.action.remove"/>
             </Datagrid>
           </ReferenceManyField>
@@ -208,7 +209,7 @@ export const GoalShow = (props) => {
             filter={{ method: "getGoalsWithProfilesAndGraphs" }}
           >
             <Datagrid expand={<PostPanel />}>
-              <CustomFieldLinker method="user" />
+              <CustomFieldLinker method="profiles" />
               <TextField source="goal.dailyTimePerDay" />
               <TextField source="goal.deadlineSetter" />
             </Datagrid>

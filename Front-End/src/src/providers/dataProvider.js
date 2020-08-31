@@ -12,25 +12,44 @@ import {
   DELETE_MANY,
 } from "react-admin";
 
-function profileHnadler(type, resource, params, apiUrl) {
-  let url = "";
-  const options = {};
-  if (type === GET_ONE) {
-    url = `${apiUrl}/${resource}/${params.id}`;
+// A function decorating a dataProvider for handling user profiles
+const handleUserProfile = dataProvider => (verb, resource, params) => {
+  // I know I only GET or UPDATE the profile as there is only one for the current user
+  // To showcase how I can do something completely different here, I'll store it in local storage
+  // You can replace this with a customized fetch call to your own API route, too
+  if (resource === "profile") {
+    if (verb === GET_ONE) {
+      const storedProfile = localStorage.getItem("profile");
+
+      if (storedProfile) {
+        return Promise.resolve({
+          data: JSON.parse(storedProfile),
+        });
+      }
+
+      // No profile yet, return a default one
+      // It's important that I send the same id as requested in params.
+      // Indeed, react-admin will verify it and may throw an error if they are different
+      // I don't have to do it when the profile exists as it will be included in the data stored in the local storage
+      return Promise.resolve({
+        data: { id: params.id, nickname: "" },
+      });
+    }
+
+    if (verb === UPDATE) {
+      localStorage.setItem("profile", JSON.stringify(params.data));
+      return Promise.resolve({ data: params.data });
+    }
   }
 
-  if (type === UPDATE) {
-    localStorage.setItem("profile", JSON.stringify(params.data));
-    return Promise.resolve({ data: params.data });
-  }
-  return { url, options };
-}
+  // Fallback to the dataProvider default handling for all other resources
+  return dataProvider(verb, resource, params);
+};
 
 function swtichResourceMethods(type, resource, params, apiUrl) {
   let url = "";
   const options = {};
 
-  console.log(type);
   switch (type) {
     case GET_LIST: {
       let { page, perPage } = params.pagination;
@@ -85,17 +104,7 @@ function swtichResourceMethods(type, resource, params, apiUrl) {
   return { url, options };
 }
 
-/**
- * Maps react-admin queries to a REST API implemented using Java Spring Boot and Swagger
- *
- * @example
- * GET_LIST     => GET http://my.api.url/posts?page=0&pageSize=10
- * GET_ONE      => GET http://my.api.url/posts/123
- * GET_MANY     => GET http://my.api.url/posts?id=1234&id=5678
- * UPDATE       => PUT http://my.api.url/posts/123
- * CREATE       => POST http://my.api.url/posts
- * DELETE       => DELETE http://my.api.url/posts/123
- */
+
 export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
   /**
    * @param {String} type One of the constants appearing at the top if this file, e.g. 'UPDATE'
@@ -103,9 +112,12 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
    * @param {Object} params The data request params, depending on the type
    * @returns {Object} { url, options } The HTTP request parameters
    */
+  console.log(123);
+ 
   const convertDataRequestToHTTP = (type, resource, params) => {
+    console.log(resource);
     if (resource == "profile") {
-      return profileHnadler(type, resource, params, apiUrl);
+      return handleUserProfile(type, resource, params, apiUrl);
     }
     return swtichResourceMethods(type, resource, params, apiUrl);
   };
@@ -145,6 +157,7 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
    * @returns {Promise} the Promise for a data response
    */
   return (type, resource, params) => {
+
     // simple-rest doesn't handle filters on UPDATE route, so we fallback to calling UPDATE n times instead
     if (type === UPDATE_MANY) {
       return Promise.all(
@@ -173,7 +186,6 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
 
     const { url, options } = convertDataRequestToHTTP(type, resource, params);
     return httpClient(url, options).then((response) => {
-      console.log(url);
       return convertHTTPResponse(response, type, resource, params);
     });
   };
