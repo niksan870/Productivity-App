@@ -15,9 +15,7 @@ import { BASE_API_URL } from "./constants";
 import customRoutes from "./src/customRoutes";
 import LoginPage from "./src/components/register/App";
 import { Route } from 'react-router-dom';
-
 import MyLayout from "./src/layout/MyLayout";
-
 import { fetchUtils, Admin, Resource, EditGuesser } from "react-admin";
 import provider from "./src/providers/dataProvider";
 import { ProfileEdit, ProfileShow } from "./src/components/profile";
@@ -38,6 +36,51 @@ import Menu from "./src/menu/menu";
 import polyglotI18nProvider from "ra-i18n-polyglot";
 import { englishMessages } from "./src/translate/translate";
 import profile from './src/profile/index';
+import { GET_ONE, UPDATE } from "react-admin";
+
+
+// A function decorating a dataProvider for handling user profiles
+const handleUserProfile = dataProvider => (verb, resource, params) => {
+
+  // I know I only GET or UPDATE the profile as there is only one for the current user
+  // To showcase how I can do something completely different here, I'll store it in local storage
+  // You can replace this with a customized fetch call to your own API route, too
+  if (resource === "profile") {
+    if (verb === GET_ONE) {
+      return Promise.resolve(
+        httpClient(`${BASE_API_URL}/profiles/me`, {
+          method: "GET",
+        })
+      ).then((response) => ({
+        data: response.json,
+      }));
+
+      // const storedProfile = localStorage.getItem("profile");
+
+      // if (storedProfile) {
+      //   return Promise.resolve({
+      //     data: JSON.parse(storedProfile),
+      //   });
+      // }
+
+      // No profile yet, return a default one
+      // It's important that I send the same id as requested in params.
+      // Indeed, react-admin will verify it and may throw an error if they are different
+      // I don't have to do it when the profile exists as it will be included in the data stored in the local storage
+      // return Promise.resolve({
+      //   data: { id: params.id, nickname: "" },
+      // });
+    }
+
+    if (verb === UPDATE) {
+      localStorage.setItem("profile", JSON.stringify(params.data));
+      return Promise.resolve({ data: params.data });
+    }
+  }
+
+  // Fallback to the dataProvider default handling for all other resources
+  return dataProvider(verb, resource, params);
+};
 
 const httpClient = (url, options = {}) => {
   if (!options.headers) {
@@ -49,9 +92,11 @@ const httpClient = (url, options = {}) => {
 };
 const dataProvider = provider(BASE_API_URL, httpClient);
 const uploadCapableDataProvider = addUploadFeature(dataProvider);
+const testProvider = handleUserProfile(
+  uploadCapableDataProvider
+);
 
 const history = createHashHistory();
-
 const i18nProvider = polyglotI18nProvider((locale) => englishMessages);
 
 const App = () => {
@@ -59,20 +104,19 @@ const App = () => {
     <Provider
       store={createAdminStore({
         authProvider,
-        dataProvider,
+        testProvider,
         history,
       })}
     >
       <Admin
         locale="en"
         menu={Menu}
-        loginPage={LoginPage}
-        history={history}
-        authProvider={authProvider}
-        dataProvider={uploadCapableDataProvider}
+        appLayout={MyLayout}
         dashboard={Dashboard}
+        loginPage={LoginPage}
+        authProvider={authProvider}
+        dataProvider={testProvider}
         i18nProvider={i18nProvider}
-        dataProvider={dataProvider}
         customRoutes={[
             <Route
                 key="my-profile"
@@ -80,11 +124,13 @@ const App = () => {
                 component={profile.edit}
             />
         ]}
-       appLayout={MyLayout}
+       history={history}
       >
         {(permissions) => {
           return [
-            <Resource name="profile" />,
+            <Resource 
+            name="profile"
+            edit={profile.edit} />,
             <Resource
               name="profiles"
               list={ProfilesList}

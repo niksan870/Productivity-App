@@ -26,7 +26,8 @@ class MyUserMenuView extends Component {
     render() {
         const { crudGetOne, profile, ...props } = this.props;
 
-        console.log(this.props)
+        console.log(profile)
+        
         return (
             <UserMenu label={profile ? profile.nickname : ''} {...props}>
                 <MenuItemLink

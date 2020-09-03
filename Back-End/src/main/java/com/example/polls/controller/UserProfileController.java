@@ -3,6 +3,7 @@ package com.example.polls.controller;
 import com.example.polls.dto.user.UserProfileDTO;
 import com.example.polls.exception.ResourceNotFoundException;
 import com.example.polls.model.User;
+import com.example.polls.payload.UserSummary;
 import com.example.polls.security.CurrentUser;
 import com.example.polls.security.UserPrincipal;
 import com.example.polls.service.UserProfileService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
 @RestController
@@ -26,6 +28,7 @@ import java.util.UUID;
 public class UserProfileController {
     @Autowired
     private UserProfileService userProfileService;
+
 
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")

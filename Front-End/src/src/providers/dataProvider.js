@@ -12,39 +12,6 @@ import {
   DELETE_MANY,
 } from "react-admin";
 
-// A function decorating a dataProvider for handling user profiles
-const handleUserProfile = dataProvider => (verb, resource, params) => {
-  // I know I only GET or UPDATE the profile as there is only one for the current user
-  // To showcase how I can do something completely different here, I'll store it in local storage
-  // You can replace this with a customized fetch call to your own API route, too
-  if (resource === "profile") {
-    if (verb === GET_ONE) {
-      const storedProfile = localStorage.getItem("profile");
-
-      if (storedProfile) {
-        return Promise.resolve({
-          data: JSON.parse(storedProfile),
-        });
-      }
-
-      // No profile yet, return a default one
-      // It's important that I send the same id as requested in params.
-      // Indeed, react-admin will verify it and may throw an error if they are different
-      // I don't have to do it when the profile exists as it will be included in the data stored in the local storage
-      return Promise.resolve({
-        data: { id: params.id, nickname: "" },
-      });
-    }
-
-    if (verb === UPDATE) {
-      localStorage.setItem("profile", JSON.stringify(params.data));
-      return Promise.resolve({ data: params.data });
-    }
-  }
-
-  // Fallback to the dataProvider default handling for all other resources
-  return dataProvider(verb, resource, params);
-};
 
 function swtichResourceMethods(type, resource, params, apiUrl) {
   let url = "";
@@ -112,13 +79,9 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
    * @param {Object} params The data request params, depending on the type
    * @returns {Object} { url, options } The HTTP request parameters
    */
-  console.log(123);
  
   const convertDataRequestToHTTP = (type, resource, params) => {
-    console.log(resource);
-    if (resource == "profile") {
-      return handleUserProfile(type, resource, params, apiUrl);
-    }
+   
     return swtichResourceMethods(type, resource, params, apiUrl);
   };
 
@@ -185,6 +148,7 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
     }
 
     const { url, options } = convertDataRequestToHTTP(type, resource, params);
+    
     return httpClient(url, options).then((response) => {
       return convertHTTPResponse(response, type, resource, params);
     });
