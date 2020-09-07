@@ -41,35 +41,32 @@ import { GET_ONE, UPDATE } from "react-admin";
 
 // A function decorating a dataProvider for handling user profiles
 const handleUserProfile = dataProvider => (verb, resource, params) => {
-
   // I know I only GET or UPDATE the profile as there is only one for the current user
   // To showcase how I can do something completely different here, I'll store it in local storage
   // You can replace this with a customized fetch call to your own API route, too
   if (resource === "profile") {
     if (verb === GET_ONE) {
+      let storedProfile = localStorage.getItem("my-profile");
+
+      if (storedProfile) {
+        return Promise.resolve({
+          data: JSON.parse(storedProfile),
+        });
+      }
+   
+
       return Promise.resolve(
         httpClient(`${BASE_API_URL}/profiles/me`, {
           method: "GET",
         })
-      ).then((response) => ({
-        data: response.json,
-      }));
-
-      // const storedProfile = localStorage.getItem("profile");
-
-      // if (storedProfile) {
-      //   return Promise.resolve({
-      //     data: JSON.parse(storedProfile),
-      //   });
-      // }
-
-      // No profile yet, return a default one
-      // It's important that I send the same id as requested in params.
-      // Indeed, react-admin will verify it and may throw an error if they are different
-      // I don't have to do it when the profile exists as it will be included in the data stored in the local storage
-      // return Promise.resolve({
-      //   data: { id: params.id, nickname: "" },
-      // });
+      ).then((response) => {
+        response.json["id"] = "my-profile";
+        console.log(response.json)
+        localStorage.setItem("my-profile", JSON.stringify(response.json));
+        return ({
+          data: response.json,
+        })
+      });
     }
 
     if (verb === UPDATE) {
@@ -118,11 +115,11 @@ const App = () => {
         dataProvider={testProvider}
         i18nProvider={i18nProvider}
         customRoutes={[
-            <Route
-                key="my-profile"
-                path="/my-profile"
-                component={profile.edit}
-            />
+          <Route
+            key="my-profile"
+            path="/my-profile"
+            component={profile.show}
+          />
         ]}
        history={history}
       >
@@ -130,7 +127,9 @@ const App = () => {
           return [
             <Resource 
             name="profile"
-            edit={profile.edit} />,
+            edit={profile.edit} 
+            show={profile.show} 
+            />,
             <Resource
               name="profiles"
               list={ProfilesList}

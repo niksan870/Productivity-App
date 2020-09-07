@@ -18,6 +18,7 @@ import {
   ShowButton,
   DeleteButton,
   ReferenceField,
+  TopToolbar
 } from "react-admin";
 import FormDialog from "../fields/FormDialog";
 
@@ -30,7 +31,6 @@ import ChatBubbleIcon from "@material-ui/icons/ChatBubble";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
-import { TopToolbar } from "react-admin";
 import axios from "axios";
 
 import LinkAnyFieldButton from "../fields/LinkAnyFieldButton";

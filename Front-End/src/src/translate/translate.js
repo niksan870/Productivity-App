@@ -2,6 +2,7 @@ export const englishMessages = {
   ra: {
     auth: {
       logout: "Logout",
+      user_menu: "User Menu"
     },
     notification: {
       http_error: "Network error. Please retry",

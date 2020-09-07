@@ -1,6 +1,20 @@
 // in profile/EditProfile.jso
 import React from 'react';
-import { Edit, TextInput, SimpleForm, required } from 'react-admin';
+import { Edit, TextInput, SimpleForm, required, TextField,
+    ImageInput,
+    DateInput,
+    SelectInput,
+    ImageField,} from 'react-admin';
+import { CustomImageField } from "../fields/CustomImageField";
+
+function formatPicture(value) {
+    if (!value || typeof value === "string") {
+      return { picture: value };
+    } else {
+      return value;
+    }
+  }
+  
 
 const ProfileEdit = ({ staticContext, ...props }) => {
     return (
@@ -11,24 +25,40 @@ const ProfileEdit = ({ staticContext, ...props }) => {
                 As there is only one config for the current user, I decided to
                 hard-code it here
             */
-           id="my-profile"
+            id="my-profile"
             /*
                 For the same reason, I need to provide the resource and basePath props
                 which are required by the Edit component
             */
-                    resource="profile"
-                    basePath="/my-profile"
-            redirect={false}
+            resource="profile"
+            basePath="/my-profile"
             /*
                 I also customized the page title as it'll make more sense to the user
             */
-           title="My profile"
+            title="My profile"
             redirect={false} // I don't need any redirection here, there's no list page
             {...props}
         >
-            <SimpleForm>
-                <TextInput source="nickname" validate={required()} />
-            </SimpleForm>
+      <SimpleForm redirect="show" submitOnEnter={true}>
+      
+        <ImageInput format={formatPicture} source="picture" accept="image/*">
+          <ImageField source="picture" />
+        </ImageInput>
+        <TextInput source="name" />
+        {/* <TextInput source="id" /> */}
+        <TextInput source="phoneNumber" />
+        <SelectInput
+          source="gender"
+          choices={[
+            { id: "FEMALE", name: "FEMALE" },
+            { id: "MALE", name: "MALE" },
+            { id: "OTHER", name: "OTHER" },
+          ]}
+        />
+        <DateInput label="Date Of Birth" source="dateOfBirth" />
+        <TextInput source="city" />
+        <TextInput source="country" />
+      </SimpleForm>
         </Edit>
     );
 };

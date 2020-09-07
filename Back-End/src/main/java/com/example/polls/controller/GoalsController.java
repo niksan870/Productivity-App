@@ -25,6 +25,8 @@ public class GoalsController {
     @Autowired
     private GoalsService goalsService;
 
+    @Autowired
+    private com.example.polls.service.UserPrincipal userPrincipal;
 
     @GetMapping("/getGoalsWithProfilesAndGraphs/{id}")
     @PreAuthorize("isAuthenticated()")
@@ -37,7 +39,14 @@ public class GoalsController {
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
     public Page<GoalResponse> getGoalsFromProfile(@PathVariable Long id){
-        System.out.println();
+        return goalsService.getGoalsFromProfile(id);
+    }
+
+    @GetMapping("getGoalsFromProfile/my-profile")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<GoalResponse> getGoalsFromMyProfile(@CurrentUser UserPrincipal currentUser){
+        long id = currentUser.getId();
         return goalsService.getGoalsFromProfile(id);
     }
 
