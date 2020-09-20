@@ -13,7 +13,8 @@ public class DashboardLoaderDTO {
     private List<Pomodoro> pomodoros;
     private List<PomodoroMusic> pomodoroMusic;
 
-    public DashboardLoaderDTO(UserProfileDTO userProfileDTO, List<GoalResponse> goalResponseList, List<Pomodoro> pomodoros, List<PomodoroMusic> pomodoroMusics) {
+    public DashboardLoaderDTO(UserProfileDTO userProfileDTO, List<GoalResponse> goalResponseList,
+                              List<Pomodoro> pomodoros, List<PomodoroMusic> pomodoroMusics) {
         this.userProfile = userProfileDTO;
         this.goals = goalResponseList;
         this.pomodoros = pomodoros;

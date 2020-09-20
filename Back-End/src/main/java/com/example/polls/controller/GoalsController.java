@@ -5,6 +5,7 @@ import com.example.polls.dto.TimeRequest;
 import com.example.polls.dto.goal.GoalChartDTO;
 import com.example.polls.dto.goal.GoalRequest;
 import com.example.polls.dto.goal.GoalResponse;
+import com.example.polls.dto.user.UserProfileDTO;
 import com.example.polls.security.CurrentUser;
 import com.example.polls.security.UserPrincipal;
 import com.example.polls.service.GoalsService;
@@ -31,35 +32,37 @@ public class GoalsController {
     @GetMapping("/getGoalsWithProfilesAndGraphs/{id}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public Page<GoalChartDTO> getGoalsWithProfilesAndGraphs(@RequestParam int page, @RequestParam int pageSize, @PathVariable UUID id) {
+    public Page<GoalChartDTO> getGoalsWithProfilesAndGraphs(@RequestParam int page, @RequestParam int pageSize,
+                                                            @PathVariable UUID id) {
         return goalsService.getGoalsWithProfilesAndGraphs(page, pageSize, id);
     }
 
     @GetMapping("getGoalsFromProfile/{id}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public Page<GoalResponse> getGoalsFromProfile(@PathVariable Long id){
+    public Page<GoalResponse> getGoalsFromProfile(@PathVariable Long id) {
         return goalsService.getGoalsFromProfile(id);
     }
 
     @GetMapping("getGoalsFromProfile/my-profile")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public Page<GoalResponse> getGoalsFromMyProfile(@CurrentUser UserPrincipal currentUser){
+    public Page<GoalResponse> getGoalsFromMyProfile(@CurrentUser UserPrincipal currentUser) {
         long id = currentUser.getId();
         return goalsService.getGoalsFromProfile(id);
     }
 
     @GetMapping("/mine")
     @PreAuthorize("hasRole('USER')")
-    public DashboardLoaderDTO getCurrentUser(@CurrentUser UserPrincipal currentUser){
+    public DashboardLoaderDTO getCurrentUser(@CurrentUser UserPrincipal currentUser) {
         return goalsService.getCurrentUserGoalList(currentUser.getId());
     }
 
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public Page<GoalResponse> getPage(@RequestParam int page, @RequestParam int pageSize, @RequestParam String filterParams) {
+    public Page<GoalResponse> getPage(@RequestParam int page, @RequestParam int pageSize,
+                                      @RequestParam String filterParams) {
         return goalsService.getPage(page, pageSize, filterParams);
     }
 
@@ -73,14 +76,14 @@ public class GoalsController {
     @PostMapping("")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.CREATED)
-    public GoalResponse create(@RequestBody GoalRequest goalRequest) throws NullPointerException{
-      return goalsService.create(goalRequest);
+    public GoalResponse create(@RequestBody GoalRequest goalRequest) throws NullPointerException {
+        return goalsService.create(goalRequest);
     }
 
     @PostMapping("/sendRequest/{secretKey}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public void sendRequest(@PathVariable UUID secretKey) throws NullPointerException{
+    public void sendRequest(@PathVariable UUID secretKey) throws NullPointerException {
         goalsService.sendRequest(secretKey);
     }
 
@@ -88,14 +91,14 @@ public class GoalsController {
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
     public GoalResponse update(@RequestBody GoalRequest goalRequest,
-                       @PathVariable UUID id) {
+                               @PathVariable UUID id) {
         return goalsService.update(goalRequest, id);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public HttpEntity delete(@PathVariable("id") UUID id){
+    public HttpEntity delete(@PathVariable("id") UUID id) {
         return goalsService.delete(id);
     }
 }

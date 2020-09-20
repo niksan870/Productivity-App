@@ -21,7 +21,7 @@ public class GoalChart extends UserDateAudit {
 
     @NonNull
     @Column(columnDefinition = "TEXT")
-    @Convert(converter= JSONObjectConverter.class)
+    @Convert(converter = JSONObjectConverter.class)
     private JSONObject jsonData;
 
     private float timeDone;
@@ -39,7 +39,8 @@ public class GoalChart extends UserDateAudit {
     public GoalChart() {
     }
 
-    public GoalChart(User user, @NonNull JSONObject jsonData, float timeDone, float timeDoneForTheDay, float timeExpectedToBeDone, Goal goal) {
+    public GoalChart(User user, @NonNull JSONObject jsonData, float timeDone, float timeDoneForTheDay,
+                     float timeExpectedToBeDone, Goal goal) {
         this.jsonData = jsonData;
         this.timeDone = timeDone;
         this.timeDoneForTheDay = timeDoneForTheDay;

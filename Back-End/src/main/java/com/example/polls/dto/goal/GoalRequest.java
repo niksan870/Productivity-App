@@ -51,6 +51,7 @@ public class GoalRequest {
             this.title = stringifiedJsonData;
             return this;
         }
+
         public Builder withIsPrivate(String isPrivate) {
             this.title = isPrivate;
             return this;
@@ -87,7 +88,8 @@ public class GoalRequest {
         this.user = user;
     }
 
-    public GoalRequest(){}
+    public GoalRequest() {
+    }
 
 
     public boolean isPrivate() {

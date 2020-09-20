@@ -26,7 +26,8 @@ public class GoalResponse {
         this.userProfile = userProfile;
     }
 
-    public GoalResponse(){}
+    public GoalResponse() {
+    }
 
     public UUID getId() {
         return id;

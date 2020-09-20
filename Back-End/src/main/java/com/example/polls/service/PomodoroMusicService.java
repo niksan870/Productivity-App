@@ -40,7 +40,7 @@ public class PomodoroMusicService {
         return pomodoroMusicRepository.save(pomodoro);
     }
 
-    public HttpEntity delete(Long id){
+    public HttpEntity delete(Long id) {
         PomodoroMusic pomodoroMusic = pomodoroMusicRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pomodoro was not found for this id :: " + id));
 

@@ -1,4 +1,5 @@
 package com.example.polls.payload;
+
 import javax.validation.constraints.NotNull;
 
 public class VoteRequest {

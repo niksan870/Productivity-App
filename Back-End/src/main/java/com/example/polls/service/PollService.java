@@ -53,7 +53,7 @@ public class PollService {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
         Page<Poll> polls = pollRepository.findAll(pageable);
 
-        if(polls.getNumberOfElements() == 0) {
+        if (polls.getNumberOfElements() == 0) {
             return new PagedResponse<>(Collections.emptyList(), polls.getNumber(),
                     polls.getSize(), polls.getTotalElements(), polls.getTotalPages(), polls.isLast());
         }
@@ -80,7 +80,8 @@ public class PollService {
                 polls.getSize(), polls.getTotalElements(), polls.getTotalPages(), polls.isLast());
     }
 
-    public PagedResponse<PollResponse> getPollsCreatedBy(String username, UserPrincipal currentUser, int page, int size) {
+    public PagedResponse<PollResponse> getPollsCreatedBy(String username, UserPrincipal currentUser, int page,
+                                                         int size) {
         validatePageNumberAndSize(page, size);
 
         User user = userRepository.findByUsername(username)
@@ -155,7 +156,8 @@ public class PollService {
             return null;
         }).collect(Collectors.toList());
 
-        return new PagedResponse<>(pollResponses, userVotedPollIds.getNumber(), userVotedPollIds.getSize(), userVotedPollIds.getTotalElements(), userVotedPollIds.getTotalPages(), userVotedPollIds.isLast());
+        return new PagedResponse<>(pollResponses, userVotedPollIds.getNumber(), userVotedPollIds.getSize(),
+                userVotedPollIds.getTotalElements(), userVotedPollIds.getTotalPages(), userVotedPollIds.isLast());
     }
 
 
@@ -192,19 +194,19 @@ public class PollService {
 
         // Retrieve vote done by logged in user
         Vote userVote = null;
-        if(currentUser != null) {
+        if (currentUser != null) {
             userVote = voteRepository.findByUserIdAndPollId(currentUser.getId(), pollId);
         }
 
         return ModelMapper.mapPollToPollResponse(poll, choiceVotesMap,
-                creator, userVote != null ? userVote.getChoice().getId(): null);
+                creator, userVote != null ? userVote.getChoice().getId() : null);
     }
 
     public PollResponse castVoteAndGetUpdatedPoll(Long pollId, VoteRequest voteRequest, UserPrincipal currentUser) throws UnsupportedEncodingException {
         Poll poll = pollRepository.findById(pollId)
                 .orElseThrow(() -> new ResourceNotFoundException("Poll", "id", pollId));
 
-        if(poll.getExpirationDateTime().isBefore(Instant.now())) {
+        if (poll.getExpirationDateTime().isBefore(Instant.now())) {
             throw new BadRequestException("Sorry! This Poll has already expired");
         }
 
@@ -244,11 +246,11 @@ public class PollService {
 
 
     private void validatePageNumberAndSize(int page, int size) {
-        if(page < 0) {
+        if (page < 0) {
             throw new BadRequestException("Page number cannot be less than zero.");
         }
 
-        if(size > AppConstants.MAX_PAGE_SIZE) {
+        if (size > AppConstants.MAX_PAGE_SIZE) {
             throw new BadRequestException("Page size must not be greater than " + AppConstants.MAX_PAGE_SIZE);
         }
     }
@@ -266,7 +268,7 @@ public class PollService {
     private Map<Long, Long> getPollUserVoteMap(UserPrincipal currentUser, List<Long> pollIds) {
         // Retrieve Votes done by the logged in user to the given pollIds
         Map<Long, Long> pollUserVoteMap = null;
-        if(currentUser != null) {
+        if (currentUser != null) {
             List<Vote> userVotes = voteRepository.findByUserIdAndPollIdIn(currentUser.getId(), pollIds);
 
             pollUserVoteMap = userVotes.stream()

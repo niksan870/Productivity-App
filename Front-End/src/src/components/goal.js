@@ -138,6 +138,7 @@ export const GoalEdit = (props) => {
 };
 
 const GoalActions = ({ basePath, data, resource, props }) => {
+  console.log(data)
   let { editable } = data;
   let permissions = localStorage.getItem("permissions");
   return (
@@ -197,7 +198,7 @@ export const GoalShow = (props) => {
           >
             <Datagrid >
               <CustomFieldLinker method="participants" />
-              <DeleteButton undoable={false} label="ra.action.remove"/>
+              <DeleteButton undoable={false} label="ra.action.remove" />
             </Datagrid>
           </ReferenceManyField>
         </Tab>

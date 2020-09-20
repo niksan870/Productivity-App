@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "pomodoros_music")
-@JsonIdentityInfo(generator= ObjectIdGenerators.UUIDGenerator.class, property="@id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "@id")
 public class PomodoroMusic extends UserDateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,9 +18,10 @@ public class PomodoroMusic extends UserDateAudit {
 
     private String url;
 
-    public PomodoroMusic(){}
+    public PomodoroMusic() {
+    }
 
-    public PomodoroMusic( String title, String url) {
+    public PomodoroMusic(String title, String url) {
         this.title = title;
         this.url = url;
     }

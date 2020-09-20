@@ -11,11 +11,9 @@ public class JSONObjectConverter implements AttributeConverter<JSONObject, Strin
     @Override
     public String convertToDatabaseColumn(JSONObject jsonData) {
         String json;
-        try{
+        try {
             json = jsonData.toString();
-        }
-        catch (NullPointerException ex)
-        {
+        } catch (NullPointerException ex) {
             //extend error handling here if you want
             json = "";
         }

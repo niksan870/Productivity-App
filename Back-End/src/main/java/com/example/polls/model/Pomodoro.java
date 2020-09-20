@@ -8,8 +8,8 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "pomodoros")
-@JsonIdentityInfo(generator= ObjectIdGenerators.UUIDGenerator.class, property="@id")
-public class Pomodoro extends UserDateAudit  {
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "@id")
+public class Pomodoro extends UserDateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,8 +19,6 @@ public class Pomodoro extends UserDateAudit  {
     private int sessionLength;
     private boolean current;
     private String title;
-
-
 
 
     public Long getId() {

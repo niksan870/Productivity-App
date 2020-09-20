@@ -35,7 +35,7 @@ public class PomodoroController {
     @PostMapping("")
     @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.CREATED)
-    public Pomodoro create(@Valid @RequestBody Pomodoro pomodoro) throws NullPointerException{
+    public Pomodoro create(@Valid @RequestBody Pomodoro pomodoro) throws NullPointerException {
         return pomodoroService.create(pomodoro);
     }
 
@@ -43,13 +43,13 @@ public class PomodoroController {
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
     public Pomodoro update(@RequestBody Pomodoro pomodoroRequestBody,
-                       @PathVariable Long id) {
+                           @PathVariable Long id) {
         return pomodoroService.update(pomodoroRequestBody, id);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public HttpEntity delete(@PathVariable("id") long id){
+    public HttpEntity delete(@PathVariable("id") long id) {
         return pomodoroService.delete(id);
     }
 }

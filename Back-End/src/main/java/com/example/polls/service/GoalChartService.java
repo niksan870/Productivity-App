@@ -31,7 +31,8 @@ public class GoalChartService {
     private UserPrincipal userPrincipal;
 
     public GoalChartDTO logTime(UUID id, TimeRequest time) {
-        GoalChart updateGoal = goalChartRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Chart", "id", id));
+        GoalChart updateGoal = goalChartRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+                "Chart", "id", id));
 
         float addToTimeDone = updateGoal.getTimeDone();
         float timeToAdd = time.getTime();
@@ -80,7 +81,8 @@ public class GoalChartService {
     }
 
     public GoalChartDTO getOne(UUID id) {
-        GoalChart goalChart = goalChartRepository.findByGoalIdAndUserId(id, userPrincipal.getCurrentUserPrincipal().getId())
+        GoalChart goalChart = goalChartRepository.findByGoalIdAndUserId(id,
+                userPrincipal.getCurrentUserPrincipal().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Chart", "id", id));
 
         return ObjectMapperUtils.map(goalChart, GoalChartDTO.class);

@@ -1,7 +1,6 @@
 package com.example.polls.dto.goal;
 
 
-
 import com.example.polls.model.Goal;
 import com.example.polls.model.User;
 import com.example.polls.util.JSONObjectConverter;
@@ -33,7 +32,8 @@ public class GoalChartDTO {
     public GoalChartDTO() {
     }
 
-    public GoalChartDTO(User user,String jsonData, float timeDone, float timeDoneForTheDay, float timeExpectedToBeDone, Goal goal) {
+    public GoalChartDTO(User user, String jsonData, float timeDone, float timeDoneForTheDay,
+                        float timeExpectedToBeDone, Goal goal) {
         this.jsonData = jsonData;
         this.timeDone = timeDone;
         this.timeDoneForTheDay = timeDoneForTheDay;
@@ -55,7 +55,7 @@ public class GoalChartDTO {
         return jsonData;
     }
 
-    public void setJsonData( String jsonData) {
+    public void setJsonData(String jsonData) {
         this.jsonData = jsonData;
     }
 

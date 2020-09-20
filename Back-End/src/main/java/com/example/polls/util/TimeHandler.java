@@ -52,7 +52,7 @@ public class TimeHandler {
 
         List<DateTime> ret = new ArrayList<DateTime>();
         DateTime tmp = start;
-        while(tmp.isBefore(end) || tmp.equals(end)) {
+        while (tmp.isBefore(end) || tmp.equals(end)) {
             ret.add(tmp);
             tmp = tmp.plusDays(1);
         }
@@ -60,11 +60,12 @@ public class TimeHandler {
     }
 
 
-    public static String formattedTime(TimeRequest time){
+    public static String formattedTime(TimeRequest time) {
         float hours = time.getTime() / 3600;
         float minutes = (time.getTime() % 3600) / 60;
         float seconds = time.getTime() % 60;
-        String formattedTime = "00" + ":" + Helper.twoDigitString(hours) + ":" + Helper.twoDigitString(minutes) + ":" + Helper.twoDigitString(seconds);
+        String formattedTime =
+                "00" + ":" + Helper.twoDigitString(hours) + ":" + Helper.twoDigitString(minutes) + ":" + Helper.twoDigitString(seconds);
 
         return formattedTime;
     }

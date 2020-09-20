@@ -23,7 +23,8 @@ public class PomodoroService {
 
     public Page<Pomodoro> getPage(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Pomodoro> asd =  pomodoroRepository.findByCreatedBy(userPrincipal.getCurrentUserPrincipal().getId(), pageable);
+        Page<Pomodoro> asd = pomodoroRepository.findByCreatedBy(userPrincipal.getCurrentUserPrincipal().getId(),
+                pageable);
 
         return asd;
     }
@@ -33,7 +34,7 @@ public class PomodoroService {
                 .orElseThrow(() -> new ResourceNotFoundException("Pomodoro", "Id", id));
     }
 
-    public Pomodoro create(Pomodoro pomodoro) throws NullPointerException{
+    public Pomodoro create(Pomodoro pomodoro) throws NullPointerException {
         return pomodoroRepository.save(pomodoro);
     }
 
@@ -48,7 +49,7 @@ public class PomodoroService {
         return pomodoroRepository.save(pomodoro);
     }
 
-    public HttpEntity delete(Long id){
+    public HttpEntity delete(Long id) {
         Pomodoro pomodoro = pomodoroRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pomodoro", "Id", id));
 

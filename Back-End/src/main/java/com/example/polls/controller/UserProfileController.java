@@ -40,7 +40,7 @@ public class UserProfileController {
 
     @GetMapping("me")
     @PreAuthorize("hasRole('USER')")
-    public UserProfileDTO getCurrentUser(@CurrentUser UserPrincipal currentUser){
+    public UserProfileDTO getCurrentUser(@CurrentUser UserPrincipal currentUser) {
         return userProfileService.getOne(currentUser.getId());
     }
 
@@ -65,12 +65,20 @@ public class UserProfileController {
         return userProfileService.getParticipants(id);
     }
 
+    @GetMapping("/getGoalOwner/{id}")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<UserProfileDTO> getGoalOwner(@RequestParam int page, @RequestParam int pageSize,
+                                             @PathVariable UUID id) {
+        return userProfileService.getGoalOwner(id);
+    }
+
     @PutMapping("{id}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
     public void update(@PathVariable Long id,
-                                          @RequestBody UserProfileDTO userProfileBody) throws ResourceNotFoundException, IOException {
-         userProfileService.update(id, userProfileBody);
+                       @RequestBody UserProfileDTO userProfileBody) throws ResourceNotFoundException, IOException {
+        userProfileService.update(id, userProfileBody);
     }
 
     @DeleteMapping("{usersProfileToBeDeletedId}")

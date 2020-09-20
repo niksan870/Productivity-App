@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -40,8 +41,10 @@ public class PollController {
 
     @GetMapping
     public PagedResponse<PollResponse> getPolls(@CurrentUser UserPrincipal currentUser,
-                                                @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
-                                                @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
+                                                @RequestParam(value = "page", defaultValue =
+                                                        AppConstants.DEFAULT_PAGE_NUMBER) int page,
+                                                @RequestParam(value = "size", defaultValue =
+                                                        AppConstants.DEFAULT_PAGE_SIZE) int size) {
         return pollService.getAllPolls(currentUser, page, size);
     }
 
@@ -68,8 +71,8 @@ public class PollController {
     @PostMapping("/{pollId}/votes")
     @PreAuthorize("hasRole('USER')")
     public PollResponse castVote(@CurrentUser UserPrincipal currentUser,
-                         @PathVariable Long pollId,
-                         @Valid @RequestBody VoteRequest voteRequest) throws UnsupportedEncodingException {
+                                 @PathVariable Long pollId,
+                                 @Valid @RequestBody VoteRequest voteRequest) throws UnsupportedEncodingException {
         return pollService.castVoteAndGetUpdatedPoll(pollId, voteRequest, currentUser);
     }
 

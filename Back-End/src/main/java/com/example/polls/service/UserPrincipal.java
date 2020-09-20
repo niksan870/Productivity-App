@@ -14,8 +14,8 @@ public class UserPrincipal {
 
     @Autowired
     private UserRepository userRepository;
-    
-    public User getCurrentUserPrincipal(){
+
+    public User getCurrentUserPrincipal() {
         Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
         String username = currentAuth.getPrincipal().toString();
         return userRepository.findByUsername(currentAuth.getName())

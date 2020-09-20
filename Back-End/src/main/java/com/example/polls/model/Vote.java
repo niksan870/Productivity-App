@@ -1,6 +1,7 @@
 package com.example.polls.model;
 
 import com.example.polls.model.audit.DateAudit;
+
 import javax.persistence.*;
 
 @Entity

@@ -19,9 +19,10 @@ import {
   sanitizeListRestProps,
   Filter,
   SearchInput,
-  ReferenceField,
+  ReferenceManyField,
 } from "react-admin";
 
+import Example from "../components/pomodoro/Example";
 const ListActions = ({
   currentSort,
   className,
@@ -40,19 +41,19 @@ const ListActions = ({
   total,
   ...rest
 }) => (
-  <TopToolbar className={className} {...sanitizeListRestProps(rest)}>
-    {filters &&
-      cloneElement(filters, {
-        resource,
-        showFilter,
-        displayedFilters,
-        filterValues,
-        context: "button",
-      })}
-    <CreateButton basePath={basePath} />
-    <FormDialog />
-  </TopToolbar>
-);
+    <TopToolbar className={className} {...sanitizeListRestProps(rest)}>
+      {filters &&
+        cloneElement(filters, {
+          resource,
+          showFilter,
+          displayedFilters,
+          filterValues,
+          context: "button",
+        })}
+      <CreateButton basePath={basePath} />
+      <FormDialog />
+    </TopToolbar>
+  );
 
 ListActions.defaultProps = {
   selectedIds: [],
@@ -100,12 +101,24 @@ export const GoalsList = (props) => {
       <Datagrid>
         <TextField source="title" />
         <TextField source="description" />
-        <CustomFieldLinker method="profiles" />
+        <ReferenceManyField
+          label="Owners"
+          reference="profiles"
+          target="id"
+          filter={{ method: "getGoalOwner" }}
+        >
+          <Datagrid >
+            <TextField source="name" />
+            <ShowButton />
+          </Datagrid>
+        </ReferenceManyField>
         <TextField source="dailyTimePerDay" />
-        {/* <TextField source="timeDone" />
-        <TextField source="timeDoneForTheDay" /> */}
         <ShowButton />
       </Datagrid>
     </List>
   );
 };
+
+const PostPanel = ({ id, record, resource }) => (
+  <Example {...JSON.parse(record.jsonData)} />
+);

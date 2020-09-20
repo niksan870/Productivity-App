@@ -12,12 +12,12 @@ import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 @Entity
-@Table(name= "users", uniqueConstraints = {
+@Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = {
-            "username"
+                "username"
         }),
         @UniqueConstraint(columnNames = {
-            "email"
+                "email"
         })
 })
 public class User extends DateAudit {

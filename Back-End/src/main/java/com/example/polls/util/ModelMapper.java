@@ -16,7 +16,8 @@ import java.util.stream.Collectors;
 
 public class ModelMapper {
 
-    public static PollResponse mapPollToPollResponse(Poll poll, Map<Long, Long> choiceVotesMap, User creator, Long userVote) throws UnsupportedEncodingException {
+    public static PollResponse mapPollToPollResponse(Poll poll, Map<Long, Long> choiceVotesMap, User creator,
+                                                     Long userVote) throws UnsupportedEncodingException {
         PollResponse pollResponse = new PollResponse();
         pollResponse.setId(poll.getId());
         pollResponse.setQuestion(poll.getQuestion());
@@ -30,7 +31,7 @@ public class ModelMapper {
             choiceResponse.setId(choice.getId());
             choiceResponse.setText(choice.getText());
 
-            if(choiceVotesMap.containsKey(choice.getId())) {
+            if (choiceVotesMap.containsKey(choice.getId())) {
                 choiceResponse.setVoteCount(choiceVotesMap.get(choice.getId()));
             } else {
                 choiceResponse.setVoteCount(0);
@@ -39,10 +40,11 @@ public class ModelMapper {
         }).collect(Collectors.toList());
 
         pollResponse.setChoices(choiceResponses);
-        UserSummary creatorSummary = new UserSummary(creator.getId(), creator.getUsername(), creator.getName(), creator.getPicture());
+        UserSummary creatorSummary = new UserSummary(creator.getId(), creator.getUsername(), creator.getName(),
+                creator.getPicture());
         pollResponse.setCreatedBy(creatorSummary);
 
-        if(userVote != null) {
+        if (userVote != null) {
             pollResponse.setSelectedChoice(userVote);
         }
 
@@ -64,14 +66,15 @@ public class ModelMapper {
         goalResponse.setStringifiedJsonData("");
         goalResponse.setId(goal.getId());
 
-        UserSummary creatorSummary = new UserSummary(creator.getId(), creator.getUsername(), creator.getName(), creator.getPicture());
+        UserSummary creatorSummary = new UserSummary(creator.getId(), creator.getUsername(), creator.getName(),
+                creator.getPicture());
         goalResponse.setCreatedBy(creatorSummary);
 
         return goalResponse;
     }
 
 
-    public static GoalResponse mapGoalToGoalResponse(Goal goal){
+    public static GoalResponse mapGoalToGoalResponse(Goal goal) {
         GoalResponse goalResponse = new GoalResponse();
 
         String[] hoursAndMinutes = goal.getDailyTimePerDay().split(":");

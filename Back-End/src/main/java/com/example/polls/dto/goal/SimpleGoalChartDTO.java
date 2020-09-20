@@ -13,7 +13,8 @@ public class SimpleGoalChartDTO {
 
     private float timeExpectedToBeDone;
 
-    public SimpleGoalChartDTO(UUID id, String jsonData, float timeDone, float timeDoneForTheDay, float timeExpectedToBeDone) {
+    public SimpleGoalChartDTO(UUID id, String jsonData, float timeDone, float timeDoneForTheDay,
+                              float timeExpectedToBeDone) {
         this.id = id;
         this.jsonData = jsonData;
         this.timeDone = timeDone;

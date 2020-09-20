@@ -36,7 +36,7 @@ public class PomodoroMusicController {
     @PostMapping("")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.CREATED)
-    public PomodoroMusic create(@RequestBody PomodoroMusic pomodoroMusic) throws NullPointerException{
+    public PomodoroMusic create(@RequestBody PomodoroMusic pomodoroMusic) throws NullPointerException {
         return pomodoroMusicService.create(pomodoroMusic);
     }
 
@@ -44,14 +44,14 @@ public class PomodoroMusicController {
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
     public PomodoroMusic update(@RequestBody PomodoroMusic pomodoroRequestBody,
-                           @PathVariable Long id) {
+                                @PathVariable Long id) {
         return pomodoroMusicService.update(pomodoroRequestBody, id);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public HttpEntity delete(@PathVariable("id") long id){
+    public HttpEntity delete(@PathVariable("id") long id) {
         return pomodoroMusicService.delete(id);
     }
 }

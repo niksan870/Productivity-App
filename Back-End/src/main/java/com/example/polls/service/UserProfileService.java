@@ -3,6 +3,7 @@ package com.example.polls.service;
 import com.example.polls.dto.user.UserProfileDTO;
 import com.example.polls.exception.BadRequestException;
 import com.example.polls.exception.ResourceNotFoundException;
+import com.example.polls.model.Goal;
 import com.example.polls.model.User;
 import com.example.polls.repository.GoalChartRepository;
 import com.example.polls.repository.GoalsRepository;
@@ -20,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -61,7 +63,7 @@ class UserProfileService {
         return page;
     }
 
-    public User newUser( User newUser) {
+    public User newUser(User newUser) {
         return userRepository.save(newUser);
     }
 
@@ -71,7 +73,7 @@ class UserProfileService {
 
         User user = ObjectMapperUtils.map(userProfileBody, userProfile);
 
-       userRepository.save(user);
+        userRepository.save(user);
     }
 
     public UserProfileDTO getOne(Long id) {
@@ -88,6 +90,25 @@ class UserProfileService {
         return userProfileDTO;
     }
 
+    public Page<UserProfileDTO> getGoalOwner(UUID id) {
+        Goal goal = goalsRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Goal", "id", id));
+        User user = userRepository.findById(goal.getCreatedBy())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+
+
+        List<User> users = new ArrayList();
+        users.add(user);
+
+        System.out.println("\n\n\n123123123123123");
+        System.out.println(users.size());
+        System.out.println("\n\n\n");
+        List<UserProfileDTO> userProfileDTO = ObjectMapperUtils.mapAll(users, UserProfileDTO.class);
+
+
+        return new PageImpl<>(userProfileDTO);
+    }
+
 
     public HttpEntity delete(Long userId) {
         User userProfileToBeDeleted = userRepository.findById(userId)
@@ -96,9 +117,11 @@ class UserProfileService {
         Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
         String username = currentAuth.getPrincipal().toString();
         User currentUser = this.userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));;
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        ;
 
-        if ((currentUser.getId() == userProfileToBeDeleted.getId()) || (currentUser.getRoles().toString().indexOf("ADMIN") == 1)) {
+        if ((currentUser.getId() == userProfileToBeDeleted.getId()) || (currentUser.getRoles().toString().indexOf(
+                "ADMIN") == 1)) {
             userRepository.save(userProfileToBeDeleted);
             return new ResponseEntity("Successfully deleted users profile", HttpStatus.OK);
         } else {
@@ -107,7 +130,7 @@ class UserProfileService {
     }
 
     private void validatePageNumberAndSize(int page, int size) {
-        if(page < 0) {
+        if (page < 0) {
             throw new BadRequestException("Page number cannot be less than zero.");
         }
     }

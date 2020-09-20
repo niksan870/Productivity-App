@@ -30,7 +30,8 @@ public interface GoalsRepository extends JpaRepository<Goal, UUID> {
     @Query("SELECT g FROM Goal g WHERE created_by = :#{#id} AND g.title LIKE CONCAT('%',:#{#q},'%')")
     Page<Goal> findWhereUserIdWithFilter(@Param("id") long id, @Param("q") String q, Pageable pageable);
 
-    @Query("SELECT g FROM Goal g WHERE (is_private = 0 OR created_by = :#{#id}) AND g.title LIKE CONCAT('%',:#{#q},'%')")
+    @Query("SELECT g FROM Goal g WHERE (is_private = 0 OR created_by = :#{#id}) AND g.title LIKE CONCAT('%',:#{#q}," +
+            "'%')")
     Page<Goal> findWithFilter(@Param("id") long id, @Param("q") String q, Pageable pageable);
 
     Goal findOneById(UUID id);

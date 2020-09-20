@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static com.example.polls.security.ApplicationUserRole.*;
+
 public class UserPrincipal implements UserDetails {
     private Long id;
 
@@ -29,7 +30,8 @@ public class UserPrincipal implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrincipal(Long id, String picture, String name, String username, String email, String password, Collection<? extends GrantedAuthority> authorities) throws UnsupportedEncodingException {
+    public UserPrincipal(Long id, String picture, String name, String username, String email, String password,
+                         Collection<? extends GrantedAuthority> authorities) throws UnsupportedEncodingException {
         this.id = id;
         byte[] bytes = picture.getBytes("UTF-8");
         this.picture = bytes;
@@ -46,7 +48,7 @@ public class UserPrincipal implements UserDetails {
 //        ).collect(Collectors.toList());
         Set<SimpleGrantedAuthority> authorities = USER.getGrantedAuthorities();
 
-            return new UserPrincipal(
+        return new UserPrincipal(
                 user.getId(),
                 user.getPicture(),
                 user.getName(),

@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -61,12 +60,15 @@ public class GoalsService {
     public DashboardLoaderDTO getCurrentUserGoalList(long userId) {
         User user = userProfileRepository.getOne(userId);
         Set<Goal> goals = user.getsub_goals();
-        List<Pomodoro> pomodoros = pomodoroRepository.findAllWhereUserID(userPrincipal.getCurrentUserPrincipal().getId());
-        List<PomodoroMusic> pomodoroMusics = pomodoroMusicRepository.findAllWhereUserID(userPrincipal.getCurrentUserPrincipal().getId());
+        List<Pomodoro> pomodoros =
+                pomodoroRepository.findAllWhereUserID(userPrincipal.getCurrentUserPrincipal().getId());
+        List<PomodoroMusic> pomodoroMusics =
+                pomodoroMusicRepository.findAllWhereUserID(userPrincipal.getCurrentUserPrincipal().getId());
 
         UserProfileDTO userProfileDTO = ObjectMapperUtils.map(user, UserProfileDTO.class);
         List<GoalResponse> goalResponses = ObjectMapperUtils.mapAll(goals, GoalResponse.class);
-        DashboardLoaderDTO dashboardLoaderDTO = new DashboardLoaderDTO(userProfileDTO, goalResponses, pomodoros, pomodoroMusics);
+        DashboardLoaderDTO dashboardLoaderDTO = new DashboardLoaderDTO(userProfileDTO, goalResponses, pomodoros,
+                pomodoroMusics);
         return dashboardLoaderDTO;
     }
 
@@ -132,7 +134,8 @@ public class GoalsService {
             float expectedTime = (((hours * 3600) + (minutes * 60)) / 3600);
 
             JSONObject json = setupJsonData(goal.getDeadlineSetter(), hours, minutes);
-            GoalChart goalChart = new GoalChart(userPrincipal.getCurrentUserPrincipal(), json, 0, 0, expectedTime, goal);
+            GoalChart goalChart = new GoalChart(userPrincipal.getCurrentUserPrincipal(), json, 0, 0, expectedTime,
+                    goal);
 
             goalChartRepository.save(goalChart);
         }
@@ -169,8 +172,10 @@ public class GoalsService {
 
         Goal updatedGoal = goalsRepository.save(goal);
 
-        float expectedTime = (((Float.parseFloat(goalRequest.getHours()) * 3600) + (Float.parseFloat(goalRequest.getMinutes()) * 60)) / 3600);
-        JSONObject json = setupJsonData(goalRequest.getDeadlineSetter(), Float.parseFloat(goalRequest.getHours()), Float.parseFloat(goalRequest.getMinutes()));
+        float expectedTime =
+                (((Float.parseFloat(goalRequest.getHours()) * 3600) + (Float.parseFloat(goalRequest.getMinutes()) * 60)) / 3600);
+        JSONObject json = setupJsonData(goalRequest.getDeadlineSetter(), Float.parseFloat(goalRequest.getHours()),
+                Float.parseFloat(goalRequest.getMinutes()));
         GoalChart goalChart = new GoalChart(userPrincipal.getCurrentUserPrincipal(), json, 0, 0, expectedTime, goal);
 
         goalChartRepository.save(goalChart);
@@ -200,6 +205,7 @@ public class GoalsService {
         return new PageImpl<>(listOfPostDTO);
     }
 
+
     public HttpEntity delete(UUID id) {
         Goal goal = goalsRepository.findOneById(id);
         goalsRepository.delete(goal);
@@ -207,7 +213,7 @@ public class GoalsService {
     }
 
     private void validatePageNumberAndSize(int page, int size) {
-        if(page < 0) {
+        if (page < 0) {
             throw new BadRequestException("Page number cannot be less than zero.");
         }
     }
@@ -226,7 +232,7 @@ public class GoalsService {
         return creatorMap;
     }
 
-    private JSONObject setupJsonData(String deadlineSetter, float hours, float minutes){
+    private JSONObject setupJsonData(String deadlineSetter, float hours, float minutes) {
         String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
         DateTime start = DateTime.parse(currentDate);
         DateTime end = DateTime.parse(deadlineSetter);

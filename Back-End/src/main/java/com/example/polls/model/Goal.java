@@ -41,8 +41,8 @@ public class Goal extends UserDateAudit {
     @ManyToMany
     @JoinTable(
             name = "sub_goals",
-            joinColumns = { @JoinColumn(name = "goal_id") },
-            inverseJoinColumns = { @JoinColumn(name = "user_id") }
+            joinColumns = {@JoinColumn(name = "goal_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
     private Set<User> attendees = new HashSet<User>();
 
