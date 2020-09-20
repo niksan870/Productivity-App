@@ -13,100 +13,95 @@ import java.util.*;
 @Entity
 @Table(name = "user_goals")
 public class Goal extends UserDateAudit {
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(columnDefinition = "BINARY(16)")
-    private UUID id;
+  @Id
+  @GeneratedValue(generator = "uuid2")
+  @GenericGenerator(name = "uuid2", strategy = "uuid2")
+  @Column(columnDefinition = "BINARY(16)")
+  private UUID id;
 
-    private String title;
+  private String title;
 
-    private String description;
+  private String description;
 
-    private String dailyTimePerDay;
+  private String dailyTimePerDay;
 
-    private String deadlineSetter;
+  private String deadlineSetter;
 
-    private boolean isPrivate;
+  private boolean isPrivate;
 
-    @JsonIgnore
-    @OneToMany(
-            mappedBy = "goal",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<GoalChart> goalCharts = new ArrayList<>();
+  @JsonIgnore
+  @OneToMany(mappedBy = "goal", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<GoalChart> goalCharts = new ArrayList<>();
 
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-            name = "sub_goals",
-            joinColumns = {@JoinColumn(name = "goal_id")},
-            inverseJoinColumns = {@JoinColumn(name = "user_id")}
-    )
-    private Set<User> attendees = new HashSet<User>();
+  @JsonIgnore
+  @ManyToMany
+  @JoinTable(
+      name = "sub_goals",
+      joinColumns = {@JoinColumn(name = "goal_id")},
+      inverseJoinColumns = {@JoinColumn(name = "user_id")})
+  private Set<User> attendees = new HashSet<User>();
 
-    public String getTitle() {
-        return title;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public UUID getId() {
-        return id;
-    }
+  public UUID getId() {
+    return id;
+  }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
+  public void setId(UUID id) {
+    this.id = id;
+  }
 
-    public String getDailyTimePerDay() {
-        return dailyTimePerDay;
-    }
+  public String getDailyTimePerDay() {
+    return dailyTimePerDay;
+  }
 
-    public void setDailyTimePerDay(String dailyTimePerDay) {
-        this.dailyTimePerDay = dailyTimePerDay;
-    }
+  public void setDailyTimePerDay(String dailyTimePerDay) {
+    this.dailyTimePerDay = dailyTimePerDay;
+  }
 
-    public String getDeadlineSetter() {
-        return deadlineSetter;
-    }
+  public String getDeadlineSetter() {
+    return deadlineSetter;
+  }
 
-    public void setDeadlineSetter(String deadlineSetter) {
-        this.deadlineSetter = deadlineSetter;
-    }
+  public void setDeadlineSetter(String deadlineSetter) {
+    this.deadlineSetter = deadlineSetter;
+  }
 
-    public boolean isPrivate() {
-        return isPrivate;
-    }
+  public boolean isPrivate() {
+    return isPrivate;
+  }
 
-    public void setPrivate(boolean aPrivate) {
-        isPrivate = aPrivate;
-    }
+  public void setPrivate(boolean aPrivate) {
+    isPrivate = aPrivate;
+  }
 
-    public Set<User> getAttendees() {
-        return attendees;
-    }
+  public Set<User> getAttendees() {
+    return attendees;
+  }
 
-    public void setAttendees(Set<User> attendees) {
-        this.attendees = attendees;
-    }
+  public void setAttendees(Set<User> attendees) {
+    this.attendees = attendees;
+  }
 
-    public List<GoalChart> getGoalCharts() {
-        return goalCharts;
-    }
+  public List<GoalChart> getGoalCharts() {
+    return goalCharts;
+  }
 
-    public void setGoalCharts(List<GoalChart> goalCharts) {
-        this.goalCharts = goalCharts;
-    }
+  public void setGoalCharts(List<GoalChart> goalCharts) {
+    this.goalCharts = goalCharts;
+  }
 }

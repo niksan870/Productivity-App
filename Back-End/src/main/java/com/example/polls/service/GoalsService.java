@@ -1,7 +1,6 @@
 package com.example.polls.service;
 
 import com.example.polls.dto.DashboardLoaderDTO;
-import com.example.polls.dto.TimeRequest;
 import com.example.polls.dto.goal.GoalChartDTO;
 import com.example.polls.dto.goal.GoalRequest;
 import com.example.polls.dto.goal.GoalResponse;
@@ -33,223 +32,228 @@ import java.util.stream.Collectors;
 
 @Service
 public class GoalsService {
-    @Autowired
-    private GoalsRepository goalsRepository;
+  @Autowired private GoalsRepository goalsRepository;
 
-    @Autowired
-    private GoalChartRepository goalChartRepository;
+  @Autowired private GoalChartRepository goalChartRepository;
 
-    @Autowired
-    private PomodoroRepository pomodoroRepository;
+  @Autowired private PomodoroRepository pomodoroRepository;
 
-    @Autowired
-    private PomodoroMusicRepository pomodoroMusicRepository;
+  @Autowired private PomodoroMusicRepository pomodoroMusicRepository;
 
-    @Autowired
-    private UserPrincipal userPrincipal;
+  @Autowired private UserPrincipal userPrincipal;
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userProfileRepository;
+  @Autowired private UserRepository userProfileRepository;
 
-    @Autowired
-    private GoalResourceAssembler goalResourceAssembler;
+  @Autowired private GoalResourceAssembler goalResourceAssembler;
 
-    public DashboardLoaderDTO getCurrentUserGoalList(long userId) {
-        User user = userProfileRepository.getOne(userId);
-        Set<Goal> goals = user.getsub_goals();
-        List<Pomodoro> pomodoros =
-                pomodoroRepository.findAllWhereUserID(userPrincipal.getCurrentUserPrincipal().getId());
-        List<PomodoroMusic> pomodoroMusics =
-                pomodoroMusicRepository.findAllWhereUserID(userPrincipal.getCurrentUserPrincipal().getId());
+  public DashboardLoaderDTO getCurrentUserGoalList(long userId) {
+    User user = userProfileRepository.getOne(userId);
+    Set<Goal> goals = user.getsub_goals();
+    List<Pomodoro> pomodoros =
+        pomodoroRepository.findAllWhereUserID(userPrincipal.getCurrentUserPrincipal().getId());
+    List<PomodoroMusic> pomodoroMusics =
+        pomodoroMusicRepository.findAllWhereUserID(userPrincipal.getCurrentUserPrincipal().getId());
 
-        UserProfileDTO userProfileDTO = ObjectMapperUtils.map(user, UserProfileDTO.class);
-        List<GoalResponse> goalResponses = ObjectMapperUtils.mapAll(goals, GoalResponse.class);
-        DashboardLoaderDTO dashboardLoaderDTO = new DashboardLoaderDTO(userProfileDTO, goalResponses, pomodoros,
-                pomodoroMusics);
-        return dashboardLoaderDTO;
+    UserProfileDTO userProfileDTO = ObjectMapperUtils.map(user, UserProfileDTO.class);
+    List<GoalResponse> goalResponses = ObjectMapperUtils.mapAll(goals, GoalResponse.class);
+    DashboardLoaderDTO dashboardLoaderDTO =
+        new DashboardLoaderDTO(userProfileDTO, goalResponses, pomodoros, pomodoroMusics);
+    return dashboardLoaderDTO;
+  }
+
+  public Page<GoalResponse> getPage(int pageNo, int pageSize, String filterParams) {
+    validatePageNumberAndSize(pageNo, pageSize);
+
+    JSONObject json = new JSONObject(filterParams);
+    String q = json.has("q") ? json.getString("q") : "";
+    boolean all = json.has("all") ? json.getBoolean("all") : false;
+
+    Set<Goal> goals;
+
+    if (!all) {
+      goals =
+          goalsRepository.getCurrentUserSubGoalsByUserId(
+              userPrincipal.getCurrentUserPrincipal().getId(), q);
+    } else {
+      goals = goalsRepository.getUserSubGoalsByUserId(q);
     }
 
-    public Page<GoalResponse> getPage(int pageNo, int pageSize, String filterParams) {
-        validatePageNumberAndSize(pageNo, pageSize);
+    Map<Long, User> creatorMap = getGoalCreatorMap(goals);
 
-        JSONObject json = new JSONObject(filterParams);
-        String q = json.has("q") ? json.getString("q") : "";
-        boolean all = json.has("all") ? json.getBoolean("all") : false;
+    List<GoalResponse> goalResponses =
+        goals.stream()
+            .map(
+                goal -> {
+                  try {
+                    return ModelMapper.mapGoalToGoalResponse(
+                        goal, creatorMap.get(goal.getCreatedBy()));
+                  } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                  }
+                  return null;
+                })
+            .collect(Collectors.toList());
 
-        Set<Goal> goals;
+    return new PageImpl<>(goalResponses);
+  }
 
-        if (!all) {
-            goals = goalsRepository.getCurrentUserSubGoalsByUserId(userPrincipal.getCurrentUserPrincipal().getId(), q);
-        } else {
-            goals = goalsRepository.getUserSubGoalsByUserId(q);
-        }
+  public Page<GoalResponse> getGoalsFromProfile(Long id) {
+    Set<Goal> goals;
+    if (userPrincipal.getCurrentUserPrincipal().getId() == id) {
+      goals = goalsRepository.getGoalsFromMyProfile(id);
+    } else {
+      goals = goalsRepository.getGoalsFromProfile(id);
+    }
+    List<GoalResponse> goalResponses = ObjectMapperUtils.mapAll(goals, GoalResponse.class);
 
-        Map<Long, User> creatorMap = getGoalCreatorMap(goals);
+    return new PageImpl<>(goalResponses);
+  }
 
-        List<GoalResponse> goalResponses = goals.stream().map(goal -> {
-            try {
-                return ModelMapper.mapGoalToGoalResponse(goal,
-                        creatorMap.get(goal.getCreatedBy()));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }).collect(Collectors.toList());
+  public void sendRequest(UUID id) {
+    Goal goal =
+        goalsRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Goal", "id", id));
+    User userProfile = userPrincipal.getCurrentUserPrincipal();
 
-        return new PageImpl<>(goalResponses);
+    Set<User> updateList = goal.getAttendees();
+
+    // Check if User is already in the list
+    if (!updateList.contains(userProfile)) {
+      updateList.add(userProfile);
+      goal.setAttendees(updateList);
+
+      String[] arrTime = goal.getDailyTimePerDay().split(":", -1);
+      float hours = Float.parseFloat(arrTime[0]);
+      float minutes = Float.parseFloat(arrTime[1]);
+
+      float expectedTime = (((hours * 3600) + (minutes * 60)) / 3600);
+
+      JSONObject json = setupJsonData(goal.getDeadlineSetter(), hours, minutes);
+      GoalChart goalChart =
+          new GoalChart(userPrincipal.getCurrentUserPrincipal(), json, 0, 0, expectedTime, goal);
+
+      goalChartRepository.save(goalChart);
     }
 
+    goalsRepository.save(goal);
+  }
 
-    public Page<GoalResponse> getGoalsFromProfile(Long id) {
-        Set<Goal> goals;
-        if (userPrincipal.getCurrentUserPrincipal().getId() == id) {
-            goals = goalsRepository.getGoalsFromMyProfile(id);
-        } else {
-            goals = goalsRepository.getGoalsFromProfile(id);
-        }
-        List<GoalResponse> goalResponses = ObjectMapperUtils.mapAll(goals, GoalResponse.class);
+  public GoalResponse getOne(UUID id) throws UnsupportedEncodingException {
+    Goal goal =
+        goalsRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Goal", "id", id));
 
-        return new PageImpl<>(goalResponses);
+    GoalResponse goalResponse = ModelMapper.mapGoalToGoalResponse(goal);
+
+    if (goal.getCreatedBy() == userPrincipal.getCurrentUserPrincipal().getId()) {
+      goalResponse.setEditable(true);
+    } else {
+      goalResponse.setEditable(false);
     }
 
-    public void sendRequest(UUID id) {
-        Goal goal = goalsRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Goal", "id", id));
-        User userProfile = userPrincipal.getCurrentUserPrincipal();
+    return goalResponse;
+  }
 
-        Set<User> updateList = goal.getAttendees();
+  public GoalResponse create(GoalRequest goalRequest) throws NullPointerException {
+    Set<User> list = new HashSet<>();
+    list.add(userPrincipal.getCurrentUserPrincipal());
 
-        // Check if User is already in the list
-        if (!updateList.contains(userProfile)) {
-            updateList.add(userProfile);
-            goal.setAttendees(updateList);
+    Goal goal = new Goal();
+    goal.setAttendees(list);
+    goal.setDailyTimePerDay(goalRequest.getHours() + ":" + goalRequest.getMinutes());
+    goal.setPrivate(goalRequest.isPrivate());
+    goal.setDeadlineSetter(goalRequest.getDeadlineSetter());
+    goal.setTitle(goalRequest.getTitle());
+    goal.setDescription(goalRequest.getDescription());
 
-            String[] arrTime = goal.getDailyTimePerDay().split(":", -1);
-            float hours = Float.parseFloat(arrTime[0]);
-            float minutes = Float.parseFloat(arrTime[1]);
+    Goal updatedGoal = goalsRepository.save(goal);
 
-            float expectedTime = (((hours * 3600) + (minutes * 60)) / 3600);
+    float expectedTime =
+        (((Float.parseFloat(goalRequest.getHours()) * 3600)
+                + (Float.parseFloat(goalRequest.getMinutes()) * 60))
+            / 3600);
+    JSONObject json =
+        setupJsonData(
+            goalRequest.getDeadlineSetter(),
+            Float.parseFloat(goalRequest.getHours()),
+            Float.parseFloat(goalRequest.getMinutes()));
+    GoalChart goalChart =
+        new GoalChart(userPrincipal.getCurrentUserPrincipal(), json, 0, 0, expectedTime, goal);
 
-            JSONObject json = setupJsonData(goal.getDeadlineSetter(), hours, minutes);
-            GoalChart goalChart = new GoalChart(userPrincipal.getCurrentUserPrincipal(), json, 0, 0, expectedTime,
-                    goal);
+    goalChartRepository.save(goalChart);
 
-            goalChartRepository.save(goalChart);
-        }
+    return ObjectMapperUtils.map(updatedGoal, GoalResponse.class);
+  }
 
-        goalsRepository.save(goal);
+  public GoalResponse update(GoalRequest goalRequest, UUID id) {
+    Goal goal = goalsRepository.findOneById(id);
+    goal.setTitle(goalRequest.getTitle());
+    goal.setDescription(goalRequest.getDescription());
+    goal.setPrivate(goalRequest.isPrivate());
+    goal.setDailyTimePerDay(goalRequest.getHours() + ":" + goalRequest.getMinutes());
+    goal.setDeadlineSetter(goalRequest.getDeadlineSetter());
+
+    Goal updatedGoal = goalsRepository.save(goal);
+
+    return ObjectMapperUtils.map(updatedGoal, GoalResponse.class);
+  }
+
+  public Page<GoalChartDTO> getGoalsWithProfilesAndGraphs(int pageNo, int pageSize, UUID id) {
+    validatePageNumberAndSize(pageNo, pageSize);
+
+    List<GoalChart> goalCharts = goalChartRepository.findAllByGoalId(id);
+    List<GoalChartDTO> listOfPostDTO = ObjectMapperUtils.mapAll(goalCharts, GoalChartDTO.class);
+
+    return new PageImpl<>(listOfPostDTO);
+  }
+
+  public HttpEntity delete(UUID id) {
+    Goal goal = goalsRepository.findOneById(id);
+    goalsRepository.delete(goal);
+    return new ResponseEntity("Ops, you are not authenticated", HttpStatus.UNAUTHORIZED);
+  }
+
+  private void validatePageNumberAndSize(int page, int size) {
+    if (page < 0) {
+      throw new BadRequestException("Page number cannot be less than zero.");
+    }
+  }
+
+  private Map<Long, User> getGoalCreatorMap(Set<Goal> goals) {
+    List<Long> creatorIds =
+        goals.stream().map(Goal::getCreatedBy).distinct().collect(Collectors.toList());
+
+    List<User> creators = userRepository.findByIdIn(creatorIds);
+
+    Map<Long, User> creatorMap =
+        creators.stream().collect(Collectors.toMap(User::getId, Function.identity()));
+
+    return creatorMap;
+  }
+
+  private JSONObject setupJsonData(String deadlineSetter, float hours, float minutes) {
+    String currentDate =
+        new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+    DateTime start = DateTime.parse(currentDate);
+    DateTime end = DateTime.parse(deadlineSetter);
+    List<DateTime> between = TimeHandler.getDateRange(start, end);
+
+    float expectedTime = (((hours * 3600) + (minutes * 60)) / 3600);
+    JSONObject json = new JSONObject();
+    JSONArray array = new JSONArray();
+    for (DateTime d : between) {
+      JSONObject item = new JSONObject();
+      item.put("name", d.toString("yyyy-MM-dd"));
+      item.put("expectedTime", expectedTime);
+      item.put("timeDone", 0);
+      array.put(item);
     }
 
-    public GoalResponse getOne(UUID id) throws UnsupportedEncodingException {
-        Goal goal = goalsRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Goal", "id", id));
-
-        GoalResponse goalResponse = ModelMapper.mapGoalToGoalResponse(goal);
-
-        if (goal.getCreatedBy() == userPrincipal.getCurrentUserPrincipal().getId()) {
-            goalResponse.setEditable(true);
-        } else {
-            goalResponse.setEditable(false);
-        }
-
-        return goalResponse;
-    }
-
-    public GoalResponse create(GoalRequest goalRequest) throws NullPointerException {
-        Set<User> list = new HashSet<>();
-        list.add(userPrincipal.getCurrentUserPrincipal());
-
-        Goal goal = new Goal();
-        goal.setAttendees(list);
-        goal.setDailyTimePerDay(goalRequest.getHours() + ":" + goalRequest.getMinutes());
-        goal.setPrivate(goalRequest.isPrivate());
-        goal.setDeadlineSetter(goalRequest.getDeadlineSetter());
-        goal.setTitle(goalRequest.getTitle());
-        goal.setDescription(goalRequest.getDescription());
-
-        Goal updatedGoal = goalsRepository.save(goal);
-
-        float expectedTime =
-                (((Float.parseFloat(goalRequest.getHours()) * 3600) + (Float.parseFloat(goalRequest.getMinutes()) * 60)) / 3600);
-        JSONObject json = setupJsonData(goalRequest.getDeadlineSetter(), Float.parseFloat(goalRequest.getHours()),
-                Float.parseFloat(goalRequest.getMinutes()));
-        GoalChart goalChart = new GoalChart(userPrincipal.getCurrentUserPrincipal(), json, 0, 0, expectedTime, goal);
-
-        goalChartRepository.save(goalChart);
-
-        return ObjectMapperUtils.map(updatedGoal, GoalResponse.class);
-    }
-
-    public GoalResponse update(GoalRequest goalRequest, UUID id) {
-        Goal goal = goalsRepository.findOneById(id);
-        goal.setTitle(goalRequest.getTitle());
-        goal.setDescription(goalRequest.getDescription());
-        goal.setPrivate(goalRequest.isPrivate());
-        goal.setDailyTimePerDay(goalRequest.getHours() + ":" + goalRequest.getMinutes());
-        goal.setDeadlineSetter(goalRequest.getDeadlineSetter());
-
-        Goal updatedGoal = goalsRepository.save(goal);
-
-        return ObjectMapperUtils.map(updatedGoal, GoalResponse.class);
-    }
-
-    public Page<GoalChartDTO> getGoalsWithProfilesAndGraphs(int pageNo, int pageSize, UUID id) {
-        validatePageNumberAndSize(pageNo, pageSize);
-
-        List<GoalChart> goalCharts = goalChartRepository.findAllByGoalId(id);
-        List<GoalChartDTO> listOfPostDTO = ObjectMapperUtils.mapAll(goalCharts, GoalChartDTO.class);
-
-        return new PageImpl<>(listOfPostDTO);
-    }
-
-
-    public HttpEntity delete(UUID id) {
-        Goal goal = goalsRepository.findOneById(id);
-        goalsRepository.delete(goal);
-        return new ResponseEntity("Ops, you are not authenticated", HttpStatus.UNAUTHORIZED);
-    }
-
-    private void validatePageNumberAndSize(int page, int size) {
-        if (page < 0) {
-            throw new BadRequestException("Page number cannot be less than zero.");
-        }
-    }
-
-    private Map<Long, User> getGoalCreatorMap(Set<Goal> goals) {
-        List<Long> creatorIds = goals.stream()
-                .map(Goal::getCreatedBy)
-                .distinct()
-                .collect(Collectors.toList());
-
-        List<User> creators = userRepository.findByIdIn(creatorIds);
-
-        Map<Long, User> creatorMap = creators.stream()
-                .collect(Collectors.toMap(User::getId, Function.identity()));
-
-        return creatorMap;
-    }
-
-    private JSONObject setupJsonData(String deadlineSetter, float hours, float minutes) {
-        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-        DateTime start = DateTime.parse(currentDate);
-        DateTime end = DateTime.parse(deadlineSetter);
-        List<DateTime> between = TimeHandler.getDateRange(start, end);
-
-        float expectedTime = (((hours * 3600) + (minutes * 60)) / 3600);
-        JSONObject json = new JSONObject();
-        JSONArray array = new JSONArray();
-        for (DateTime d : between) {
-            JSONObject item = new JSONObject();
-            item.put("name", d.toString("yyyy-MM-dd"));
-            item.put("expectedTime", expectedTime);
-            item.put("timeDone", 0);
-            array.put(item);
-        }
-
-        json.put("dataGraph", array);
-        return json;
-    }
+    json.put("dataGraph", array);
+    return json;
+  }
 }

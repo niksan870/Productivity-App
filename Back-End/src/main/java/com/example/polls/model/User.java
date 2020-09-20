@@ -12,200 +12,188 @@ import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 @Entity
-@Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {
-                "username"
-        }),
-        @UniqueConstraint(columnNames = {
-                "email"
-        })
-})
+@Table(
+    name = "users",
+    uniqueConstraints = {
+      @UniqueConstraint(columnNames = {"username"}),
+      @UniqueConstraint(columnNames = {"email"})
+    })
 public class User extends DateAudit {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @NotBlank
-    @Size(max = 40)
-    private String name;
+  @NotBlank
+  @Size(max = 40)
+  private String name;
 
-    @NotBlank
-    @Size(max = 15)
-    private String username;
+  @NotBlank
+  @Size(max = 15)
+  private String username;
 
-    @NaturalId
-    @NotBlank
-    @Size(max = 40)
-    @Email
-    private String email;
+  @NaturalId
+  @NotBlank
+  @Size(max = 40)
+  @Email
+  private String email;
 
-    @NotBlank
-    @Size(max = 100)
-    private String password;
+  @NotBlank
+  @Size(max = 100)
+  private String password;
 
+  @Column(name = "phone_number")
+  @Size(max = 15)
+  private String phoneNumber;
 
-    @Column(name = "phone_number")
-    @Size(max = 15)
-    private String phoneNumber;
+  @Column(length = 10)
+  private String gender;
 
-    @Column(length = 10)
-    private String gender;
+  @Temporal(TemporalType.DATE)
+  @Column(name = "date_of_birth")
+  private Date dateOfBirth;
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "date_of_birth")
-    private Date dateOfBirth;
+  @Size(max = 100)
+  private String city;
 
-    @Size(max = 100)
-    private String city;
+  @Size(max = 100)
+  private String country;
 
-    @Size(max = 100)
-    private String country;
+  @Lob private byte[] picture = new byte[0];
 
-    @Lob
-    private byte[] picture = new byte[0];
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(
+      name = "user_roles",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "role_id"))
+  private Set<Role> roles = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+  @JsonIgnore
+  @ManyToMany(mappedBy = "attendees")
+  private Set<Goal> sub_goals = new HashSet<>();
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "attendees")
-    private Set<Goal> sub_goals = new HashSet<>();
+  @JsonIgnore
+  @OneToMany(mappedBy = "goal", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<GoalChart> goalCharts = new ArrayList<>();
 
+  public User() {}
 
-    @JsonIgnore
-    @OneToMany(
-            mappedBy = "goal",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<GoalChart> goalCharts = new ArrayList<>();
+  public User(String name, String username, String email, String password) {
+    this.name = name;
+    this.username = username;
+    this.email = email;
+    this.password = password;
+  }
 
-    public User() {
+  public Long getId() {
+    return id;
+  }
 
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public User(String name, String username, String email, String password) {
-        this.name = name;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getUsername() {
-        return username;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    public String getEmail() {
-        return email;
-    }
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  public Set<Role> getRoles() {
+    return roles;
+  }
 
-    public String getPassword() {
-        return password;
-    }
+  public void setRoles(Set<Role> roles) {
+    this.roles = roles;
+  }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+  public String getPhoneNumber() {
+    return phoneNumber;
+  }
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
+  public void setPhoneNumber(String phoneNumber) {
+    this.phoneNumber = phoneNumber;
+  }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
+  public String getGender() {
+    return gender;
+  }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+  public void setGender(String gender) {
+    this.gender = gender;
+  }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+  public Date getDateOfBirth() {
+    return dateOfBirth;
+  }
 
-    public String getGender() {
-        return gender;
-    }
+  public void setDateOfBirth(Date dateOfBirth) {
+    this.dateOfBirth = dateOfBirth;
+  }
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
+  public String getCity() {
+    return city;
+  }
 
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
+  public void setCity(String city) {
+    this.city = city;
+  }
 
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
+  public String getCountry() {
+    return country;
+  }
 
-    public String getCity() {
-        return city;
-    }
+  public void setCountry(String country) {
+    this.country = country;
+  }
 
-    public void setCity(String city) {
-        this.city = city;
-    }
+  public String getPicture() throws UnsupportedEncodingException {
+    return new String(picture, "UTF-8");
+  }
 
-    public String getCountry() {
-        return country;
-    }
+  public void setPicture(String picture) throws UnsupportedEncodingException {
+    byte[] bytes = picture.getBytes("UTF-8");
+    this.picture = bytes;
+  }
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
+  public Set<Goal> getsub_goals() {
+    return sub_goals;
+  }
 
-    public String getPicture() throws UnsupportedEncodingException {
-        return new String(picture, "UTF-8");
-    }
+  public void setsub_goals(Set<Goal> sub_goals) {
+    this.sub_goals = sub_goals;
+  }
 
-    public void setPicture(String picture) throws UnsupportedEncodingException {
-        byte[] bytes = picture.getBytes("UTF-8");
-        this.picture = bytes;
-    }
+  public List<GoalChart> getGoalCharts() {
+    return goalCharts;
+  }
 
-
-    public Set<Goal> getsub_goals() {
-        return sub_goals;
-    }
-
-    public void setsub_goals(Set<Goal> sub_goals) {
-        this.sub_goals = sub_goals;
-    }
-
-
-    public List<GoalChart> getGoalCharts() {
-        return goalCharts;
-    }
-
-    public void setGoalCharts(List<GoalChart> goalCharts) {
-        this.goalCharts = goalCharts;
-    }
+  public void setGoalCharts(List<GoalChart> goalCharts) {
+    this.goalCharts = goalCharts;
+  }
 }

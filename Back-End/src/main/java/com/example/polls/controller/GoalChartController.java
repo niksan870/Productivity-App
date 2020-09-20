@@ -19,30 +19,27 @@ import java.util.UUID;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GoalChartController {
 
-    @Autowired
-    private GoalChartService goalChartService;
+  @Autowired private GoalChartService goalChartService;
 
-    @GetMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public GoalChartDTO getOne(@PathVariable UUID id) {
-        return goalChartService.getOne(id);
-    }
+  @GetMapping("/{id}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public GoalChartDTO getOne(@PathVariable UUID id) {
+    return goalChartService.getOne(id);
+  }
 
-    @GetMapping("/getGoalCharts/{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<GoalChartDTO> getGoalCharts(@RequestParam int page, @RequestParam int pageSize, @PathVariable UUID id) {
-        return goalChartService.getGoalCharts(page, pageSize, id);
-    }
+  @GetMapping("/getGoalCharts/{id}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public Page<GoalChartDTO> getGoalCharts(
+      @RequestParam int page, @RequestParam int pageSize, @PathVariable UUID id) {
+    return goalChartService.getGoalCharts(page, pageSize, id);
+  }
 
-
-    @PutMapping("/logTime/{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public GoalChartDTO logTime(@PathVariable UUID id,
-                                @RequestBody TimeRequest time) {
-        return goalChartService.logTime(id, time);
-    }
-
+  @PutMapping("/logTime/{id}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public GoalChartDTO logTime(@PathVariable UUID id, @RequestBody TimeRequest time) {
+    return goalChartService.logTime(id, time);
+  }
 }

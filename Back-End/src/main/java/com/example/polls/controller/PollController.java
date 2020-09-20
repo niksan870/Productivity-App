@@ -25,55 +25,52 @@ import java.net.URI;
 @RequestMapping("/api/polls")
 public class PollController {
 
-    @Autowired
-    private PollRepository pollRepository;
+  @Autowired private PollRepository pollRepository;
 
-    @Autowired
-    private VoteRepository voteRepository;
+  @Autowired private VoteRepository voteRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-    @Autowired
-    private PollService pollService;
+  @Autowired private PollService pollService;
 
-    private static final Logger logger = LoggerFactory.getLogger(PollController.class);
+  private static final Logger logger = LoggerFactory.getLogger(PollController.class);
 
-    @GetMapping
-    public PagedResponse<PollResponse> getPolls(@CurrentUser UserPrincipal currentUser,
-                                                @RequestParam(value = "page", defaultValue =
-                                                        AppConstants.DEFAULT_PAGE_NUMBER) int page,
-                                                @RequestParam(value = "size", defaultValue =
-                                                        AppConstants.DEFAULT_PAGE_SIZE) int size) {
-        return pollService.getAllPolls(currentUser, page, size);
-    }
+  @GetMapping
+  public PagedResponse<PollResponse> getPolls(
+      @CurrentUser UserPrincipal currentUser,
+      @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+      @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
+    return pollService.getAllPolls(currentUser, page, size);
+  }
 
-    @PostMapping
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> createPoll(@Valid @RequestBody PollRequest pollRequest) {
-        Poll poll = pollService.createPoll(pollRequest);
+  @PostMapping
+  @PreAuthorize("hasRole('USER')")
+  public ResponseEntity<?> createPoll(@Valid @RequestBody PollRequest pollRequest) {
+    Poll poll = pollService.createPoll(pollRequest);
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{pollId}")
-                .buildAndExpand(poll.getId()).toUri();
+    URI location =
+        ServletUriComponentsBuilder.fromCurrentRequest()
+            .path("/{pollId}")
+            .buildAndExpand(poll.getId())
+            .toUri();
 
-        return ResponseEntity.created(location)
-                .body(new ApiResponse(true, "Poll Created Successfully"));
-    }
+    return ResponseEntity.created(location)
+        .body(new ApiResponse(true, "Poll Created Successfully"));
+  }
 
+  @GetMapping("/{pollId}")
+  public PollResponse getPollById(@CurrentUser UserPrincipal currentUser, @PathVariable Long pollId)
+      throws UnsupportedEncodingException {
+    return pollService.getPollById(pollId, currentUser);
+  }
 
-    @GetMapping("/{pollId}")
-    public PollResponse getPollById(@CurrentUser UserPrincipal currentUser,
-                                    @PathVariable Long pollId) throws UnsupportedEncodingException {
-        return pollService.getPollById(pollId, currentUser);
-    }
-
-    @PostMapping("/{pollId}/votes")
-    @PreAuthorize("hasRole('USER')")
-    public PollResponse castVote(@CurrentUser UserPrincipal currentUser,
-                                 @PathVariable Long pollId,
-                                 @Valid @RequestBody VoteRequest voteRequest) throws UnsupportedEncodingException {
-        return pollService.castVoteAndGetUpdatedPoll(pollId, voteRequest, currentUser);
-    }
-
+  @PostMapping("/{pollId}/votes")
+  @PreAuthorize("hasRole('USER')")
+  public PollResponse castVote(
+      @CurrentUser UserPrincipal currentUser,
+      @PathVariable Long pollId,
+      @Valid @RequestBody VoteRequest voteRequest)
+      throws UnsupportedEncodingException {
+    return pollService.castVoteAndGetUpdatedPoll(pollId, voteRequest, currentUser);
+  }
 }

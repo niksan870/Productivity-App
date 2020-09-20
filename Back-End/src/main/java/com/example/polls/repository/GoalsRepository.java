@@ -15,33 +15,36 @@ import java.util.UUID;
 
 @Repository
 public interface GoalsRepository extends JpaRepository<Goal, UUID> {
-    @Query("SELECT g FROM Goal g WHERE g.isPrivate = 0 AND g.title LIKE CONCAT('%',:#{#q},'%')")
-    Set<Goal> getUserSubGoalsByUserId(@Param("q") String q);
+  @Query("SELECT g FROM Goal g WHERE g.isPrivate = 0 AND g.title LIKE CONCAT('%',:#{#q},'%')")
+  Set<Goal> getUserSubGoalsByUserId(@Param("q") String q);
 
-    @Query("SELECT g FROM Goal g JOIN g.attendees u WHERE u.id = :id AND g.title LIKE CONCAT('%',:#{#q},'%')")
-    Set<Goal> getCurrentUserSubGoalsByUserId(@Param("id") long id, @Param("q") String q);
+  @Query(
+      "SELECT g FROM Goal g JOIN g.attendees u WHERE u.id = :id AND g.title LIKE CONCAT('%',:#{#q},'%')")
+  Set<Goal> getCurrentUserSubGoalsByUserId(@Param("id") long id, @Param("q") String q);
 
-    @Query("SELECT g FROM Goal g WHERE g.title = :#{#goalTitle}")
-    Goal findOne(@Param("goalTitle") String goalTitle);
+  @Query("SELECT g FROM Goal g WHERE g.title = :#{#goalTitle}")
+  Goal findOne(@Param("goalTitle") String goalTitle);
 
-    @Query("SELECT g FROM Goal g WHERE created_by = :#{#id}")
-    List<Goal> findAllWhereUserID(@Param("id") long id);
+  @Query("SELECT g FROM Goal g WHERE created_by = :#{#id}")
+  List<Goal> findAllWhereUserID(@Param("id") long id);
 
-    @Query("SELECT g FROM Goal g WHERE created_by = :#{#id} AND g.title LIKE CONCAT('%',:#{#q},'%')")
-    Page<Goal> findWhereUserIdWithFilter(@Param("id") long id, @Param("q") String q, Pageable pageable);
+  @Query("SELECT g FROM Goal g WHERE created_by = :#{#id} AND g.title LIKE CONCAT('%',:#{#q},'%')")
+  Page<Goal> findWhereUserIdWithFilter(
+      @Param("id") long id, @Param("q") String q, Pageable pageable);
 
-    @Query("SELECT g FROM Goal g WHERE (is_private = 0 OR created_by = :#{#id}) AND g.title LIKE CONCAT('%',:#{#q}," +
-            "'%')")
-    Page<Goal> findWithFilter(@Param("id") long id, @Param("q") String q, Pageable pageable);
+  @Query(
+      "SELECT g FROM Goal g WHERE (is_private = 0 OR created_by = :#{#id}) AND g.title LIKE CONCAT('%',:#{#q},"
+          + "'%')")
+  Page<Goal> findWithFilter(@Param("id") long id, @Param("q") String q, Pageable pageable);
 
-    Goal findOneById(UUID id);
+  Goal findOneById(UUID id);
 
-    @Query("SELECT g.attendees FROM Goal g WHERE g.id = :#{#id}")
-    List<User> getParticipants(@Param("id") UUID id);
+  @Query("SELECT g.attendees FROM Goal g WHERE g.id = :#{#id}")
+  List<User> getParticipants(@Param("id") UUID id);
 
-    @Query("SELECT g FROM Goal g JOIN g.attendees u WHERE u.id = :id AND is_private = 0")
-    Set<Goal> getGoalsFromProfile(@Param("id") long id);
+  @Query("SELECT g FROM Goal g JOIN g.attendees u WHERE u.id = :id AND is_private = 0")
+  Set<Goal> getGoalsFromProfile(@Param("id") long id);
 
-    @Query("SELECT g FROM Goal g JOIN g.attendees u WHERE u.id = :id")
-    Set<Goal> getGoalsFromMyProfile(@Param("id") long id);
+  @Query("SELECT g FROM Goal g JOIN g.attendees u WHERE u.id = :id")
+  Set<Goal> getGoalsFromMyProfile(@Param("id") long id);
 }

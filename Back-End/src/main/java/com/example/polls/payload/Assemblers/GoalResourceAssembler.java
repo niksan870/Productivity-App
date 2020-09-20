@@ -12,18 +12,19 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class GoalResourceAssembler implements RepresentationModelAssembler<Goal, EntityModel<Goal>> {
+public class GoalResourceAssembler
+    implements RepresentationModelAssembler<Goal, EntityModel<Goal>> {
 
-    @Override
-    public EntityModel<Goal> toModel(Goal goal) {
-        try {
-            return new EntityModel<>(goal,
-                    linkTo(methodOn(GoalsController.class).getOne(goal.getId())).withSelfRel(),
-                    linkTo(methodOn(GoalsController.class).delete(goal.getId())).withRel("delete_goal"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return null;
+  @Override
+  public EntityModel<Goal> toModel(Goal goal) {
+    try {
+      return new EntityModel<>(
+          goal,
+          linkTo(methodOn(GoalsController.class).getOne(goal.getId())).withSelfRel(),
+          linkTo(methodOn(GoalsController.class).delete(goal.getId())).withRel("delete_goal"));
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
     }
+    return null;
+  }
 }
-

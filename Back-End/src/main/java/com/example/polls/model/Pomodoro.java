@@ -10,56 +10,52 @@ import javax.persistence.*;
 @Table(name = "pomodoros")
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "@id")
 public class Pomodoro extends UserDateAudit {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
+  private int breakLength;
+  private int sessionLength;
+  private boolean current;
+  private String title;
 
-    private int breakLength;
-    private int sessionLength;
-    private boolean current;
-    private String title;
+  public Long getId() {
+    return id;
+  }
 
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public int getBreakLength() {
+    return breakLength;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public void setBreakLength(int breakLength) {
+    this.breakLength = breakLength;
+  }
 
+  public int getSessionLength() {
+    return sessionLength;
+  }
 
-    public int getBreakLength() {
-        return breakLength;
-    }
+  public void setSessionLength(int sessionLength) {
+    this.sessionLength = sessionLength;
+  }
 
-    public void setBreakLength(int breakLength) {
-        this.breakLength = breakLength;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public int getSessionLength() {
-        return sessionLength;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public void setSessionLength(int sessionLength) {
-        this.sessionLength = sessionLength;
-    }
+  public boolean isCurrent() {
+    return current;
+  }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public boolean isCurrent() {
-        return current;
-    }
-
-    public void setCurrent(boolean current) {
-        this.current = current;
-    }
-
+  public void setCurrent(boolean current) {
+    this.current = current;
+  }
 }

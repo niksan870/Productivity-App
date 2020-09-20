@@ -12,39 +12,39 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
 
-/**
- * Created by rajeevkumarsingh on 02/08/17.
- */
-
+/** Created by rajeevkumarsingh on 02/08/17. */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    UserRepository userRepository;
+  @Autowired UserRepository userRepository;
 
-    @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String usernameOrEmail) {
-        // Let people login with either username or email
-        User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found with username or email : " + usernameOrEmail)
-                );
+  @Override
+  @Transactional
+  public UserDetails loadUserByUsername(String usernameOrEmail) {
+    // Let people login with either username or email
+    User user =
+        userRepository
+            .findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+            .orElseThrow(
+                () ->
+                    new UsernameNotFoundException(
+                        "User not found with username or email : " + usernameOrEmail));
 
-        try {
-            return UserPrincipal.create(user);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return null;
+    try {
+      return UserPrincipal.create(user);
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
     }
+    return null;
+  }
 
-    @Transactional
-    public UserDetails loadUserById(Long id) throws UnsupportedEncodingException {
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("User", "id", id)
-        );
+  @Transactional
+  public UserDetails loadUserById(Long id) throws UnsupportedEncodingException {
+    User user =
+        userRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 
-        return UserPrincipal.create(user);
-    }
+    return UserPrincipal.create(user);
+  }
 }

@@ -15,43 +15,43 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/music")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PomodoroMusicController {
-    @Autowired
-    private PomodoroMusicService pomodoroMusicService;
+  @Autowired private PomodoroMusicService pomodoroMusicService;
 
-    @GetMapping("")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<PomodoroMusic> getPage(@RequestParam int page, @RequestParam int pageSize) {
-        Pageable pageable = PageRequest.of(page, pageSize);
-        return pomodoroMusicService.getPage(pageable);
-    }
+  @GetMapping("")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public Page<PomodoroMusic> getPage(@RequestParam int page, @RequestParam int pageSize) {
+    Pageable pageable = PageRequest.of(page, pageSize);
+    return pomodoroMusicService.getPage(pageable);
+  }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public PomodoroMusic getOne(@PathVariable Long id) {
-        return pomodoroMusicService.getOne(id);
-    }
+  @GetMapping("/{id}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public PomodoroMusic getOne(@PathVariable Long id) {
+    return pomodoroMusicService.getOne(id);
+  }
 
-    @PostMapping("")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.CREATED)
-    public PomodoroMusic create(@RequestBody PomodoroMusic pomodoroMusic) throws NullPointerException {
-        return pomodoroMusicService.create(pomodoroMusic);
-    }
+  @PostMapping("")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.CREATED)
+  public PomodoroMusic create(@RequestBody PomodoroMusic pomodoroMusic)
+      throws NullPointerException {
+    return pomodoroMusicService.create(pomodoroMusic);
+  }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public PomodoroMusic update(@RequestBody PomodoroMusic pomodoroRequestBody,
-                                @PathVariable Long id) {
-        return pomodoroMusicService.update(pomodoroRequestBody, id);
-    }
+  @PutMapping("/{id}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public PomodoroMusic update(
+      @RequestBody PomodoroMusic pomodoroRequestBody, @PathVariable Long id) {
+    return pomodoroMusicService.update(pomodoroRequestBody, id);
+  }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public HttpEntity delete(@PathVariable("id") long id) {
-        return pomodoroMusicService.delete(id);
-    }
+  @DeleteMapping("/{id}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public HttpEntity delete(@PathVariable("id") long id) {
+    return pomodoroMusicService.delete(id);
+  }
 }

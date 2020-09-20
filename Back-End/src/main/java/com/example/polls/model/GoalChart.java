@@ -13,96 +13,100 @@ import java.util.UUID;
 
 @Entity
 public class GoalChart extends UserDateAudit {
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(columnDefinition = "BINARY(16)")
-    private UUID id;
+  @Id
+  @GeneratedValue(generator = "uuid2")
+  @GenericGenerator(name = "uuid2", strategy = "uuid2")
+  @Column(columnDefinition = "BINARY(16)")
+  private UUID id;
 
-    @NonNull
-    @Column(columnDefinition = "TEXT")
-    @Convert(converter = JSONObjectConverter.class)
-    private JSONObject jsonData;
+  @NonNull
+  @Column(columnDefinition = "TEXT")
+  @Convert(converter = JSONObjectConverter.class)
+  private JSONObject jsonData;
 
-    private float timeDone;
+  private float timeDone;
 
-    private float timeDoneForTheDay;
+  private float timeDoneForTheDay;
 
-    private float timeExpectedToBeDone;
+  private float timeExpectedToBeDone;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Goal goal;
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Goal goal;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+  @ManyToOne(fetch = FetchType.LAZY)
+  private User user;
 
-    public GoalChart() {
-    }
+  public GoalChart() {}
 
-    public GoalChart(User user, @NonNull JSONObject jsonData, float timeDone, float timeDoneForTheDay,
-                     float timeExpectedToBeDone, Goal goal) {
-        this.jsonData = jsonData;
-        this.timeDone = timeDone;
-        this.timeDoneForTheDay = timeDoneForTheDay;
-        this.timeExpectedToBeDone = timeExpectedToBeDone;
-        this.goal = goal;
-        this.user = user;
-    }
+  public GoalChart(
+      User user,
+      @NonNull JSONObject jsonData,
+      float timeDone,
+      float timeDoneForTheDay,
+      float timeExpectedToBeDone,
+      Goal goal) {
+    this.jsonData = jsonData;
+    this.timeDone = timeDone;
+    this.timeDoneForTheDay = timeDoneForTheDay;
+    this.timeExpectedToBeDone = timeExpectedToBeDone;
+    this.goal = goal;
+    this.user = user;
+  }
 
-    public UUID getId() {
-        return id;
-    }
+  public UUID getId() {
+    return id;
+  }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
+  public void setId(UUID id) {
+    this.id = id;
+  }
 
-    @NonNull
-    public JSONObject getJsonData() {
-        return jsonData;
-    }
+  @NonNull
+  public JSONObject getJsonData() {
+    return jsonData;
+  }
 
-    public void setJsonData(@NonNull JSONObject jsonData) {
-        this.jsonData = jsonData;
-    }
+  public void setJsonData(@NonNull JSONObject jsonData) {
+    this.jsonData = jsonData;
+  }
 
-    public Goal getGoal() {
-        return goal;
-    }
+  public Goal getGoal() {
+    return goal;
+  }
 
-    public void setGoal(Goal goal) {
-        this.goal = goal;
-    }
+  public void setGoal(Goal goal) {
+    this.goal = goal;
+  }
 
-    public float getTimeDone() {
-        return timeDone;
-    }
+  public float getTimeDone() {
+    return timeDone;
+  }
 
-    public void setTimeDone(float timeDone) {
-        this.timeDone = timeDone;
-    }
+  public void setTimeDone(float timeDone) {
+    this.timeDone = timeDone;
+  }
 
-    public float getTimeDoneForTheDay() {
-        return timeDoneForTheDay;
-    }
+  public float getTimeDoneForTheDay() {
+    return timeDoneForTheDay;
+  }
 
-    public void setTimeDoneForTheDay(float timeDoneForTheDay) {
-        this.timeDoneForTheDay = timeDoneForTheDay;
-    }
+  public void setTimeDoneForTheDay(float timeDoneForTheDay) {
+    this.timeDoneForTheDay = timeDoneForTheDay;
+  }
 
-    public float getTimeExpectedToBeDone() {
-        return timeExpectedToBeDone;
-    }
+  public float getTimeExpectedToBeDone() {
+    return timeExpectedToBeDone;
+  }
 
-    public void setTimeExpectedToBeDone(float timeExpectedToBeDone) {
-        this.timeExpectedToBeDone = timeExpectedToBeDone;
-    }
+  public void setTimeExpectedToBeDone(float timeExpectedToBeDone) {
+    this.timeExpectedToBeDone = timeExpectedToBeDone;
+  }
 
-    public User getUser() {
-        return user;
-    }
+  public User getUser() {
+    return user;
+  }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+  public void setUser(User user) {
+    this.user = user;
+  }
 }

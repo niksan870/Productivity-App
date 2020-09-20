@@ -12,25 +12,23 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
+  Optional<User> findByEmail(String email);
 
-    Optional<User> findByUsernameOrEmail(String username, String email);
+  Optional<User> findByUsernameOrEmail(String username, String email);
 
-    List<User> findByIdIn(List<Long> userIds);
+  List<User> findByIdIn(List<Long> userIds);
 
-    Optional<User> findByUsername(String username);
+  Optional<User> findByUsername(String username);
 
-    Boolean existsByUsername(String username);
+  Boolean existsByUsername(String username);
 
-    Boolean existsByEmail(String email);
+  Boolean existsByEmail(String email);
 
+  @Query("SELECT g FROM User g JOIN g.sub_goals u WHERE u.id != :id AND g.id = :user_id")
+  Set<User> getParticipants(@Param("id") UUID id, @Param("user_id") long user_id);
 
-    @Query("SELECT g FROM User g JOIN g.sub_goals u WHERE u.id != :id AND g.id = :user_id")
-    Set<User> getParticipants(@Param("id") UUID id, @Param("user_id") long user_id);
-
-//    @Query("SELECT g FROM GoalChart g WHERE g.created_by IN (1,2)")
-//    List<User> getGoalsWithProfilesAndGraphs(@Param("ids") List<Long> ids);
+  //    @Query("SELECT g FROM GoalChart g WHERE g.created_by IN (1,2)")
+  //    List<User> getGoalsWithProfilesAndGraphs(@Param("ids") List<Long> ids);
 }

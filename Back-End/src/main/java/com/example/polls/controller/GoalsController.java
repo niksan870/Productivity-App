@@ -23,82 +23,79 @@ import java.util.UUID;
 @RequestMapping("api/goals")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GoalsController {
-    @Autowired
-    private GoalsService goalsService;
+  @Autowired private GoalsService goalsService;
 
-    @Autowired
-    private com.example.polls.service.UserPrincipal userPrincipal;
+  @Autowired private com.example.polls.service.UserPrincipal userPrincipal;
 
-    @GetMapping("/getGoalsWithProfilesAndGraphs/{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<GoalChartDTO> getGoalsWithProfilesAndGraphs(@RequestParam int page, @RequestParam int pageSize,
-                                                            @PathVariable UUID id) {
-        return goalsService.getGoalsWithProfilesAndGraphs(page, pageSize, id);
-    }
+  @GetMapping("/getGoalsWithProfilesAndGraphs/{id}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public Page<GoalChartDTO> getGoalsWithProfilesAndGraphs(
+      @RequestParam int page, @RequestParam int pageSize, @PathVariable UUID id) {
+    return goalsService.getGoalsWithProfilesAndGraphs(page, pageSize, id);
+  }
 
-    @GetMapping("getGoalsFromProfile/{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<GoalResponse> getGoalsFromProfile(@PathVariable Long id) {
-        return goalsService.getGoalsFromProfile(id);
-    }
+  @GetMapping("getGoalsFromProfile/{id}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public Page<GoalResponse> getGoalsFromProfile(@PathVariable Long id) {
+    return goalsService.getGoalsFromProfile(id);
+  }
 
-    @GetMapping("getGoalsFromProfile/my-profile")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<GoalResponse> getGoalsFromMyProfile(@CurrentUser UserPrincipal currentUser) {
-        long id = currentUser.getId();
-        return goalsService.getGoalsFromProfile(id);
-    }
+  @GetMapping("getGoalsFromProfile/my-profile")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public Page<GoalResponse> getGoalsFromMyProfile(@CurrentUser UserPrincipal currentUser) {
+    long id = currentUser.getId();
+    return goalsService.getGoalsFromProfile(id);
+  }
 
-    @GetMapping("/mine")
-    @PreAuthorize("hasRole('USER')")
-    public DashboardLoaderDTO getCurrentUser(@CurrentUser UserPrincipal currentUser) {
-        return goalsService.getCurrentUserGoalList(currentUser.getId());
-    }
+  @GetMapping("/mine")
+  @PreAuthorize("hasRole('USER')")
+  public DashboardLoaderDTO getCurrentUser(@CurrentUser UserPrincipal currentUser) {
+    return goalsService.getCurrentUserGoalList(currentUser.getId());
+  }
 
-    @GetMapping("")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<GoalResponse> getPage(@RequestParam int page, @RequestParam int pageSize,
-                                      @RequestParam String filterParams) {
-        return goalsService.getPage(page, pageSize, filterParams);
-    }
+  @GetMapping("")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public Page<GoalResponse> getPage(
+      @RequestParam int page, @RequestParam int pageSize, @RequestParam String filterParams) {
+    return goalsService.getPage(page, pageSize, filterParams);
+  }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public GoalResponse getOne(@PathVariable UUID id) throws UnsupportedEncodingException {
-        return goalsService.getOne(id);
-    }
+  @GetMapping("/{id}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public GoalResponse getOne(@PathVariable UUID id) throws UnsupportedEncodingException {
+    return goalsService.getOne(id);
+  }
 
-    @PostMapping("")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.CREATED)
-    public GoalResponse create(@RequestBody GoalRequest goalRequest) throws NullPointerException {
-        return goalsService.create(goalRequest);
-    }
+  @PostMapping("")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.CREATED)
+  public GoalResponse create(@RequestBody GoalRequest goalRequest) throws NullPointerException {
+    return goalsService.create(goalRequest);
+  }
 
-    @PostMapping("/sendRequest/{secretKey}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public void sendRequest(@PathVariable UUID secretKey) throws NullPointerException {
-        goalsService.sendRequest(secretKey);
-    }
+  @PostMapping("/sendRequest/{secretKey}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public void sendRequest(@PathVariable UUID secretKey) throws NullPointerException {
+    goalsService.sendRequest(secretKey);
+  }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public GoalResponse update(@RequestBody GoalRequest goalRequest,
-                               @PathVariable UUID id) {
-        return goalsService.update(goalRequest, id);
-    }
+  @PutMapping("/{id}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public GoalResponse update(@RequestBody GoalRequest goalRequest, @PathVariable UUID id) {
+    return goalsService.update(goalRequest, id);
+  }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public HttpEntity delete(@PathVariable("id") UUID id) {
-        return goalsService.delete(id);
-    }
+  @DeleteMapping("/{id}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public HttpEntity delete(@PathVariable("id") UUID id) {
+    return goalsService.delete(id);
+  }
 }

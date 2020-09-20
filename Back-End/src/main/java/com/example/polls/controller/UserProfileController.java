@@ -26,66 +26,65 @@ import java.util.UUID;
 @RequestMapping("api/profiles")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserProfileController {
-    @Autowired
-    private UserProfileService userProfileService;
+  @Autowired private UserProfileService userProfileService;
 
+  @GetMapping("")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public Page<UserProfileDTO> getMany(@RequestParam int page, @RequestParam int pageSize) {
+    Pageable pageable = PageRequest.of(page, pageSize);
+    return userProfileService.getMany(pageable);
+  }
 
-    @GetMapping("")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<UserProfileDTO> getMany(@RequestParam int page, @RequestParam int pageSize) {
-        Pageable pageable = PageRequest.of(page, pageSize);
-        return userProfileService.getMany(pageable);
-    }
+  @GetMapping("me")
+  @PreAuthorize("hasRole('USER')")
+  public UserProfileDTO getCurrentUser(@CurrentUser UserPrincipal currentUser) {
+    return userProfileService.getOne(currentUser.getId());
+  }
 
-    @GetMapping("me")
-    @PreAuthorize("hasRole('USER')")
-    public UserProfileDTO getCurrentUser(@CurrentUser UserPrincipal currentUser) {
-        return userProfileService.getOne(currentUser.getId());
-    }
+  @PostMapping("")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.CREATED)
+  public User create(@RequestBody User newUserProfile) {
+    return userProfileService.newUser(newUserProfile);
+  }
 
-    @PostMapping("")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.CREATED)
-    public User create(@RequestBody User newUserProfile) {
-        return userProfileService.newUser(newUserProfile);
-    }
+  @GetMapping("{id}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public UserProfileDTO getOne(@PathVariable long id) {
+    return userProfileService.getOne(id);
+  }
 
-    @GetMapping("{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public UserProfileDTO getOne(@PathVariable long id) {
-        return userProfileService.getOne(id);
-    }
+  @GetMapping("/getParticipants/{id}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public Page<UserProfileDTO> getParticipants(@PathVariable UUID id)
+      throws JsonProcessingException {
+    return userProfileService.getParticipants(id);
+  }
 
-    @GetMapping("/getParticipants/{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<UserProfileDTO> getParticipants(@PathVariable UUID id) throws JsonProcessingException {
-        return userProfileService.getParticipants(id);
-    }
+  @GetMapping("/getGoalOwner/{id}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public Page<UserProfileDTO> getGoalOwner(
+      @RequestParam int page, @RequestParam int pageSize, @PathVariable UUID id) {
+    return userProfileService.getGoalOwner(id);
+  }
 
-    @GetMapping("/getGoalOwner/{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<UserProfileDTO> getGoalOwner(@RequestParam int page, @RequestParam int pageSize,
-                                             @PathVariable UUID id) {
-        return userProfileService.getGoalOwner(id);
-    }
+  @PutMapping("{id}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public void update(@PathVariable Long id, @RequestBody UserProfileDTO userProfileBody)
+      throws ResourceNotFoundException, IOException {
+    userProfileService.update(id, userProfileBody);
+  }
 
-    @PutMapping("{id}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public void update(@PathVariable Long id,
-                       @RequestBody UserProfileDTO userProfileBody) throws ResourceNotFoundException, IOException {
-        userProfileService.update(id, userProfileBody);
-    }
-
-    @DeleteMapping("{usersProfileToBeDeletedId}")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public HttpEntity delete(@PathVariable Long usersProfileToBeDeletedId, HttpServletRequest request) {
-        return userProfileService.delete(usersProfileToBeDeletedId);
-    }
+  @DeleteMapping("{usersProfileToBeDeletedId}")
+  @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.OK)
+  public HttpEntity delete(
+      @PathVariable Long usersProfileToBeDeletedId, HttpServletRequest request) {
+    return userProfileService.delete(usersProfileToBeDeletedId);
+  }
 }
-
