@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import loginImg from "../../login.svg";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { BASE_API_AUTH_URL } from "../../../../../constants";
 
 export const Register = ({ history, parentCallback, containerRef }) => {
   const [userAlreadyExists, setUserAlreadyExists] = useState(false);
@@ -10,7 +11,7 @@ export const Register = ({ history, parentCallback, containerRef }) => {
   password.current = watch("password", "");
   const onSubmit = (values) => {
     axios
-      .post("http://localhost:8080/api/auth/signup", values)
+      .post(`${BASE_API_AUTH_URL}/signup`, values)
       .then((response) => {
         parentCallback();
         if (response.status === 201) {

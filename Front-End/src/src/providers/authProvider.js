@@ -1,7 +1,9 @@
+import { BASE_API_AUTH_URL } from "../../constants";
+
 export default {
   login: ({ usernameOrEmail, password }) => {
-    console.log(usernameOrEmail)
-    const request = new Request("http://localhost:8080/api/auth/signin", {
+    console.log(usernameOrEmail);
+    const request = new Request(`${BASE_API_AUTH_URL}/signin`, {
       method: "POST",
       body: JSON.stringify({ usernameOrEmail, password }),
       headers: new Headers({ "Content-Type": "application/json" }),

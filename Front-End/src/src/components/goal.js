@@ -34,6 +34,7 @@ import { CustomFieldLinker } from "../fields/CustomImageField";
 import Example from "../components/pomodoro/Example";
 import { CopyToClickBoard } from "../fields/CopyToClickBoard";
 import { useTranslate } from "react-admin";
+import AppContent from "../components/pomodoro/AppContent";
 
 const required = (message = "Required") => (value) =>
   value ? undefined : message;
@@ -94,51 +95,16 @@ export const GoalCreate = (props) => {
 export const GoalEdit = (props) => {
   return (
     <Edit {...props}>
-      <SimpleForm>
-        <BooleanInput label="Private" source="private" />
-        <TextInput validate={required()} source="title" />
-        <TextInput validate={required()} source="description" />
-        <SelectInput
-          source="hours"
-          choices={[
-            { id: "1", name: "1" },
-            { id: "2", name: "2" },
-            { id: "3", name: "3" },
-            { id: "4", name: "4" },
-            { id: "5", name: "5" },
-            { id: "6", name: "6" },
-            { id: "7", name: "7" },
-            { id: "8", name: "8" },
-            { id: "9", name: "9" },
-            { id: "10", name: "10" },
-            { id: "11", name: "11" },
-            { id: "12", name: "12" },
-          ]}
-        />
-        <SelectInput
-          source="minutes"
-          choices={[
-            { id: "05", name: "05" },
-            { id: "10", name: "10" },
-            { id: "15", name: "15" },
-            { id: "20", name: "20" },
-            { id: "25", name: "25" },
-            { id: "30", name: "30" },
-            { id: "35", name: "35" },
-            { id: "40", name: "40" },
-            { id: "45", name: "45" },
-            { id: "50", name: "50" },
-            { id: "55", name: "55" },
-          ]}
-        />
-        <DateInput label="Dead Line Goal Setter" source="deadlineSetter" />
-      </SimpleForm>
+      <TabbedShowLayout>
+        <Tab label="details">
+          <DateInput label="Dead Line Goal Setter" source="deadlineSetter" />
+        </Tab>
+      </TabbedShowLayout>
     </Edit>
   );
 };
 
 const GoalActions = ({ basePath, data, resource, props }) => {
-  console.log(data)
   let { editable } = data;
   let permissions = localStorage.getItem("permissions");
   return (
@@ -158,7 +124,6 @@ const GoalActions = ({ basePath, data, resource, props }) => {
 };
 
 export const GoalShow = (props) => {
-  console.log(props)
   return (
     <Show
       {...props}
@@ -184,8 +149,15 @@ export const GoalShow = (props) => {
           >
             <Datagrid expand={<PostPanel />}>
               <CustomFieldLinker method="user" />
-              <TextField label="Time done today" source="goal.dailyTimePerDay" />
-              <TextField label="Expected time to be done today" source="goal.dailyTimePerDay" />
+              <TextField
+                label="Time done today"
+                source="goal.dailyTimePerDay"
+              />
+              <TextField
+                label="Expected time to be done today"
+                source="goal.dailyTimePerDay"
+              />
+              <ShowButton />
             </Datagrid>
           </ReferenceManyField>
         </Tab>
@@ -196,25 +168,16 @@ export const GoalShow = (props) => {
             target="id"
             filter={{ method: "getParticipants" }}
           >
-            <Datagrid >
-              <CustomFieldLinker method="participants" />
+            <Datagrid>
+              <ImageField source="picture"></ImageField>
+              <TextField source="name"></TextField>
               <DeleteButton undoable={false} label="ra.action.remove" />
+              <ShowButton label="ra.action.show" />
             </Datagrid>
           </ReferenceManyField>
         </Tab>
         <Tab label="Pomodoro">
-          <ReferenceManyField
-            label="Participants"
-            reference="goals"
-            target="id"
-            filter={{ method: "getGoalsWithProfilesAndGraphs" }}
-          >
-            <Datagrid expand={<PostPanel />}>
-              <CustomFieldLinker method="profiles" />
-              <TextField source="goal.dailyTimePerDay" />
-              <TextField source="goal.deadlineSetter" />
-            </Datagrid>
-          </ReferenceManyField>
+          <AppContent />
         </Tab>
       </TabbedShowLayout>
     </Show>

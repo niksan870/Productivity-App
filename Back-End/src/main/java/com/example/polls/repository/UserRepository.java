@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Boolean existsByEmail(String email);
 
-  @Query("SELECT g FROM User g JOIN g.sub_goals u WHERE u.id != :id AND g.id = :user_id")
+  @Query("SELECT g FROM User g JOIN g.sub_goals u WHERE u.id = :id AND g.id != :user_id")
   Set<User> getParticipants(@Param("id") UUID id, @Param("user_id") long user_id);
 
   //    @Query("SELECT g FROM GoalChart g WHERE g.created_by IN (1,2)")

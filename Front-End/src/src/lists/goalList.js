@@ -6,14 +6,7 @@ import {
   DeleteButton,
   ShowButton,
   Datagrid,
-} from "react-admin";
-import { cloneElement } from "react";
-import FormDialog from "../fields/FormDialog";
-import { makeStyles, Chip } from "@material-ui/core";
-import { useTranslate } from "react-admin";
-import { CustomFieldLinker } from "../fields/CustomImageField";
-
-import {
+  ImageField,
   TopToolbar,
   CreateButton,
   sanitizeListRestProps,
@@ -21,6 +14,11 @@ import {
   SearchInput,
   ReferenceManyField,
 } from "react-admin";
+import { cloneElement } from "react";
+import FormDialog from "../fields/FormDialog";
+import { makeStyles, Chip } from "@material-ui/core";
+import { useTranslate } from "react-admin";
+import { CustomImageField } from "../fields/CustomImageField";
 
 import Example from "../components/pomodoro/Example";
 const ListActions = ({
@@ -41,19 +39,19 @@ const ListActions = ({
   total,
   ...rest
 }) => (
-    <TopToolbar className={className} {...sanitizeListRestProps(rest)}>
-      {filters &&
-        cloneElement(filters, {
-          resource,
-          showFilter,
-          displayedFilters,
-          filterValues,
-          context: "button",
-        })}
-      <CreateButton basePath={basePath} />
-      <FormDialog />
-    </TopToolbar>
-  );
+  <TopToolbar className={className} {...sanitizeListRestProps(rest)}>
+    {filters &&
+      cloneElement(filters, {
+        resource,
+        showFilter,
+        displayedFilters,
+        filterValues,
+        context: "button",
+      })}
+    <CreateButton basePath={basePath} />
+    <FormDialog />
+  </TopToolbar>
+);
 
 ListActions.defaultProps = {
   selectedIds: [],
@@ -97,7 +95,12 @@ const PostFilter = (props) => {
 
 export const GoalsList = (props) => {
   return (
-    <List {...props} filters={<PostFilter />} actions={<ListActions />}>
+    <List
+      {...props}
+      filters={<PostFilter />}
+      bulkActionButtons={false}
+      actions={<ListActions />}
+    >
       <Datagrid>
         <TextField source="title" />
         <TextField source="description" />
@@ -107,18 +110,14 @@ export const GoalsList = (props) => {
           target="id"
           filter={{ method: "getGoalOwner" }}
         >
-          <Datagrid >
+          <Datagrid>
+            <ImageField source="picture" />
             <TextField source="name" />
             <ShowButton />
           </Datagrid>
         </ReferenceManyField>
-        <TextField source="dailyTimePerDay" />
         <ShowButton />
       </Datagrid>
     </List>
   );
 };
-
-const PostPanel = ({ id, record, resource }) => (
-  <Example {...JSON.parse(record.jsonData)} />
-);

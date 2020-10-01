@@ -17,24 +17,10 @@ import {
   Datagrid,
   ShowButton,
   DeleteButton,
-  ReferenceField,
-  TopToolbar
+  TopToolbar,
 } from "react-admin";
-import FormDialog from "../fields/FormDialog";
 
-import Avatar from "@material-ui/core/Avatar";
-import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
 import { CustomImageField } from "../fields/CustomImageField";
-
-import ChatBubbleIcon from "@material-ui/icons/ChatBubble";
-import { withStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
-import Button from "@material-ui/core/Button";
-import axios from "axios";
-
-import LinkAnyFieldButton from "../fields/LinkAnyFieldButton";
-import { useQueryWithStore, Loading, Error } from "react-admin";
 
 function formatPicture(value) {
   if (!value || typeof value === "string") {

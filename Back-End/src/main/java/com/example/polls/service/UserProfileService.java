@@ -48,13 +48,11 @@ public class UserProfileService {
   }
 
   public Page<UserProfileDTO> getParticipants(UUID id) {
-    User currentUser = this.userPrincipal.getCurrentUserPrincipal();
-
+    User currentUser = userPrincipal.getCurrentUserPrincipal();
     Set<User> attendees = userRepository.getParticipants(id, currentUser.getId());
     List<UserProfileDTO> listOfPostDTO = ObjectMapperUtils.mapAll(attendees, UserProfileDTO.class);
-    final Page<UserProfileDTO> page = new PageImpl<>(listOfPostDTO);
 
-    return page;
+    return new PageImpl<>(listOfPostDTO);
   }
 
   public User newUser(User newUser) {

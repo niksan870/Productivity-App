@@ -80,11 +80,11 @@ public class UserProfileController {
     userProfileService.update(id, userProfileBody);
   }
 
-  @DeleteMapping("{usersProfileToBeDeletedId}")
+  @DeleteMapping("{id}")
   @PreAuthorize("isAuthenticated()")
   @ResponseStatus(HttpStatus.OK)
   public HttpEntity delete(
-      @PathVariable Long usersProfileToBeDeletedId, HttpServletRequest request) {
-    return userProfileService.delete(usersProfileToBeDeletedId);
+      @PathVariable Long id, HttpServletRequest request) {
+    return userProfileService.delete(id);
   }
 }

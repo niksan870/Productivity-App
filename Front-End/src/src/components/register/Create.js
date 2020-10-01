@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import BASE_API_AUTH_URL from "../../../constants";
 
 export default class Registration extends Component {
   constructor(props) {
@@ -27,7 +28,7 @@ export default class Registration extends Component {
     const { email, password, passwordConfirm, username } = this.state;
 
     axios
-      .post("http://localhost:8080/api/auth/signup", {
+      .post(`${BASE_API_AUTH_URL}/signup`, {
         username: username,
         password: password,
         passwordConfirm: passwordConfirm,
