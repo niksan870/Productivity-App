@@ -15,7 +15,7 @@
     "export": "^0.1.337",
     "gh-pages": "^1.2.0",
     "jwt-decode": "^2.2.0",
-    "moment": "^2.26.0",
+    "moment": "^2.29.2",
     "node-sass": "^4.14.1",
     "prop-types": "^15.7.2",
     "ra-data-fakerest": "^3.2.2",
